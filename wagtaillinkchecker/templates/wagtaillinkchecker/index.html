@@ -1,0 +1,21 @@
+{% extends "wagtailadmin/base.html" %}
+{% load i18n %}
+{% block titletag %}{% trans "Link Checker" %}{% endblock %}
+{% block bodyclass %}menu-linkchecker{% endblock %}
+{% block content %}
+
+    {% include "wagtailadmin/shared/header.html" with title="Link Checker" icon="link" %}
+
+    <div class="nice-padding">
+		<form method="POST" action=''>
+			{% csrf_token %}
+			{{edit_handler.render_form_content}}
+            <input type="submit" value="{% trans 'Save' %}" class="button" />
+		</form>
+
+        <br>
+        <div class="addbutton">
+            <a href="/admin/redirects/add/" class="button">Conduct Scan</a>
+        </div>
+    </div>
+{% endblock %}

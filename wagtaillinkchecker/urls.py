@@ -5,6 +5,8 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.settings,
+    url(r'^$', views.index,
+        name='wagtaillinkchecker'),
+    url(r'^scan/$', views.scan,
         name='wagtaillinkchecker'),
 ]
