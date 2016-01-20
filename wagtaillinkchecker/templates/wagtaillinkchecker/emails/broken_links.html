@@ -1,0 +1,15 @@
+Hi {{user}},<br>
+<br>
+The following links on the page <a href='{{base_url}}{% url 'wagtailadmin_pages:edit' page.id %}'>{{page.title}}</a> have come up as broken in an automated scan.<br>
+<br>
+{% for link in page_broken_links %}
+	<a href='{{link}}'>{{link}}</a>
+	<br>
+{% endfor %}
+<br><br>
+<a href='{{base_url}}{% url 'wagtailadmin_pages:edit' page.id %}'>Edit this page now.</a>
+<br><br>
+<p>Thanks,
+<br>
+{{site_name}}
+</p>

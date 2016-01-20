@@ -15,11 +15,12 @@ from .models import SitePreferences
 
 class Link(object):
 
-    def __init__(self, url, status_code=None, error=None, site=None):
+    def __init__(self, url, page, status_code=None, error=None, site=None):
         self.url = url
         self.status_code = status_code
         self.error = error
         self.site = site
+        self.page = page
 
     @property
     def message(self):
@@ -106,7 +107,7 @@ def scan(request):
         r1 = requests.get(url, verify=True)
         if r1.status_code not in range(100, 300):
             print('yep!!!!')
-            broken_links.add(Link(url, site=site, status_code=r1.status_code))
+            broken_links.add(Link(url, page, site=site, status_code=r1.status_code))
             continue
         have_crawled.add(url)
         soup = BeautifulSoup(r1.content)
@@ -131,15 +132,15 @@ def scan(request):
             try:
                 r2 = requests.get(link, verify=True)
             except requests.exceptions.ConnectionError as e:
-                broken_links.add(Link(link, error='There was an error connecting to this site.'))
+                broken_links.add(Link(link, page, error='There was an error connecting to this site.'))
                 continue
             except requests.exceptions.RequestException as e:
-                broken_links.add(Link(link, site=site, error=type(e).__name__ + ': ' + str(e)))
+                broken_links.add(Link(link, page, site=site, error=type(e).__name__ + ': ' + str(e)))
                 continue
             print('I scanned ' + str(link))
             if r2.status_code not in range(100, 300):
                 print('yep!!!!')
-                broken_links.add(Link(link, site=site, status_code=r2.status_code))
+                broken_links.add(Link(link, page, site=site, status_code=r2.status_code))
             have_crawled.add(link)
 
     return render(request, 'wagtaillinkchecker/results.html', {
