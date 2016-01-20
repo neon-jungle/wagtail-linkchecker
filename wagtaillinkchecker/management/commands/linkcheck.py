@@ -60,7 +60,7 @@ class Command(BaseCommand):
 
         messages = []
         for page in pages:
-            revision = PageRevision.objects.latest('created_at')
+            revision = PageRevision.objects.filter(page=page).latest('created_at')
             page_broken_links = []
             for link in broken_links:
                 if link.page == page:
