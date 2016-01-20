@@ -18,7 +18,7 @@ except ImportError:
 setup(
     name='wagtail-linkchecker',
     version=__version__,
-    description="A plugin to assist with readability in wagtail's hallo.js.",
+    description="A tool to assist with finding broken links on your wagtail site.",
     long_description=readme,
     author='Liam Brenner',
     author_email='liam@takeflight.com.au',
