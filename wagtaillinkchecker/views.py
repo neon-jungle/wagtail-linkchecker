@@ -49,16 +49,6 @@ class Link(object):
         return hash(self.url)
 
 
-def status_error_messages(status_code):
-    if status_code in range(100, 300):
-        message = "Success"
-    elif status_code in range(500, 600):
-        message = 'Server error'
-    else:
-        message = client.responses[status_code]
-    return message
-
-
 @lru_cache()
 def get_edit_handler(model):
     panels = extract_panel_definitions_from_model_class(model, ['site'])
