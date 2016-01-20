@@ -28,9 +28,12 @@ class Link(object):
         elif self.status_code in range(100, 300):
             message = "Success"
         elif self.status_code in range(500, 600) and self.url.startswith(self.site.root_url):
-            message = 'Internal Server error, please notify the site administrator.'
+            message = str(self.status_code) + ': ' + 'Internal server error, please notify the site administrator.'
         else:
-            message = str(self.status_code) + ': ' + client.responses[self.status_code] + '.'
+            try:
+                message = str(self.status_code) + ': ' + client.responses[self.status_code] + '.'
+            except KeyError:
+                message = str(self.status_code) + ': ' + 'Unknown error.'
         return message
 
     def __str__(self):
@@ -104,6 +107,7 @@ def scan(request):
         if r1.status_code not in range(100, 300):
             print('yep!!!!')
             broken_links.add(Link(url, site=site, status_code=r1.status_code))
+            continue
         have_crawled.add(url)
         soup = BeautifulSoup(r1.content)
         links = soup.find_all('a')
