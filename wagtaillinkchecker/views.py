@@ -56,25 +56,18 @@ def get_edit_handler(model):
 
 
 def index(request):
-    instance = SitePreferences.objects.filter(site=Site.find_for_request(request))
-    if instance.exists():
-        form = SitePreferencesForm(instance=instance.first())
-    else:
-        form = SitePreferencesForm()
+    instance = SitePreferences.objects.filter(site=Site.find_for_request(request)).first()
+    form = SitePreferencesForm(instance=instance)
     EditHandler = get_edit_handler(SitePreferences)
 
     if request.method == "POST":
-        instance = SitePreferences.objects.filter(site=Site.find_for_request(request))
-        if instance.exists():
-            form = SitePreferencesForm(request.POST, instance=instance.first())
-        else:
-            instance = SitePreferences(site=Site.find_for_request(request))
-            form = SitePreferencesForm(request.POST, instance=instance)
+        instance = SitePreferences.objects.filter(site=Site.find_for_request(request)).first()
+        form = SitePreferencesForm(request.POST, instance=instance)
         if form.is_valid():
             edit_handler = EditHandler(instance=SitePreferences, form=form)
             form.save()
     else:
-        form = SitePreferencesForm(instance=instance.first())
+        form = SitePreferencesForm(instance=instance)
         edit_handler = EditHandler(instance=SitePreferences, form=form)
 
     return render(request, 'wagtaillinkchecker/index.html', {
