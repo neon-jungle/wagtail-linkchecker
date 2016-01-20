@@ -13,9 +13,10 @@
             <input type="submit" value="{% trans 'Save' %}" class="button" />
 		</form>
 
-        <br>
+        <hr>
+        <h3> The button below will conduct a site wide scan for broken links. </h3>
         <div class="addbutton">
-            <a href="/admin/redirects/add/" class="button">Conduct Scan</a>
+            <a href="{% url 'wagtaillinkchecker_scan' %}" class="button">Conduct Scan</a>
         </div>
     </div>
 {% endblock %}

@@ -26,6 +26,8 @@ setup(
 
     install_requires=[
         'wagtail>=1.0',
+        'certifi>0',
+        'requests>=2.9.1',
     ],
     zip_safe=False,
     license='BSD License',

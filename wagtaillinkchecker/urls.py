@@ -8,5 +8,5 @@ urlpatterns = [
     url(r'^$', views.index,
         name='wagtaillinkchecker'),
     url(r'^scan/$', views.scan,
-        name='wagtaillinkchecker'),
+        name='wagtaillinkchecker_scan'),
 ]

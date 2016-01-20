@@ -1,0 +1,14 @@
+{% extends "wagtailadmin/base.html" %}
+{% load i18n %}
+{% block titletag %}{% trans "Link Checker" %}{% endblock %}
+{% block bodyclass %}menu-linkchecker{% endblock %}
+{% block content %}
+
+    {% include "wagtailadmin/shared/header.html" with title="Link Checker" icon="link" %}
+
+    <div class="nice-padding">
+		{% for link in broken_links %}
+		<p> <a href='{{link}}' target="_blank">{{link}}</a> - {{link.message}} </p>
+		{% endfor %}
+    </div>
+{% endblock %}
