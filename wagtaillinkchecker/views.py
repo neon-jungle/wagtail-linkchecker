@@ -14,7 +14,7 @@ from .forms import SitePreferencesForm
 from .models import SitePreferences
 
 
-class Link(object):
+class Link(Exception):
 
     def __init__(self, url, page, status_code=None, error=None, site=None):
         self.url = url
@@ -55,6 +55,17 @@ def get_edit_handler(model):
     panels = extract_panel_definitions_from_model_class(model, ['site'])
     return ObjectList(panels).bind_to_model(model)
 
+def get_url(url, page, site):
+    try:
+        response = requests.get(url, verify=True)
+    except requests.exceptions.ConnectionError as e:
+        raise Link(url, page, error='There was an error connecting to this site.')
+    except requests.exceptions.RequestException as e:
+        raise Link(url, page, site=site, error=type(e).__name__ + ': ' + str(e))
+    if response.status_code not in range(100, 300):
+        raise Link(url, page, site=site, status_code=response.status_code)
+    return response
+
 
 def index(request):
     instance = SitePreferences.objects.filter(site=Site.find_for_request(request)).first()
@@ -92,9 +103,10 @@ def scan(request):
         url = page.full_url
         if not url:
             continue
-        r1 = requests.get(url, verify=True)
-        if r1.status_code not in range(100, 300):
-            broken_links.add(Link(url, page, site=site, status_code=r1.status_code))
+        try:
+            r1 = get_url(url, page, site)
+        except Link as bad_link:
+            broken_links.add(bad_link)
             continue
         have_crawled.add(url)
         soup = BeautifulSoup(r1.content)
@@ -117,15 +129,9 @@ def scan(request):
 
         for link in to_crawl - have_crawled:
             try:
-                r2 = requests.get(link, verify=True)
-            except requests.exceptions.ConnectionError as e:
-                broken_links.add(Link(link, page, error='There was an error connecting to this site.'))
-                continue
-            except requests.exceptions.RequestException as e:
-                broken_links.add(Link(link, page, site=site, error=type(e).__name__ + ': ' + str(e)))
-                continue
-            if r2.status_code not in range(100, 300):
-                broken_links.add(Link(link, page, site=site, status_code=r2.status_code))
+                get_url(link, page, site)
+            except Link as bad_link:
+                broken_links.add(bad_link)
             have_crawled.add(link)
 
     return render(request, 'wagtaillinkchecker/results.html', {
