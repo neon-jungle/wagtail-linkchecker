@@ -55,6 +55,7 @@ def get_edit_handler(model):
     panels = extract_panel_definitions_from_model_class(model, ['site'])
     return ObjectList(panels).bind_to_model(model)
 
+
 def get_url(url, page, site):
     try:
         response = requests.get(url, verify=True)
