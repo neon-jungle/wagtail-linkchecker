@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 
 from django.shortcuts import render
 from django.utils.lru_cache import lru_cache
+from wagtail.wagtailadmin import messages
 from wagtail.wagtailadmin.edit_handlers import (ObjectList,
                                                 extract_panel_definitions_from_model_class)
 from wagtail.wagtailcore.models import Site
@@ -66,6 +67,8 @@ def index(request):
         if form.is_valid():
             edit_handler = EditHandler(instance=SitePreferences, form=form)
             form.save()
+        else:
+            messages.error(request, 'The form could not be saved due to validation errors')
     else:
         form = SitePreferencesForm(instance=instance)
         edit_handler = EditHandler(instance=SitePreferences, form=form)
