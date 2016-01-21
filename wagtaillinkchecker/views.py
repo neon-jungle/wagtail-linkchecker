@@ -67,6 +67,15 @@ def get_url(url, page, site):
     return response
 
 
+def clean_url(url, site):
+    if url and url != '#':
+        if url.startswith('/'):
+            url = site.root_url + url
+    else:
+        return None
+    return url
+
+
 def index(request):
     instance = SitePreferences.objects.filter(site=Site.find_for_request(request)).first()
     form = SitePreferencesForm(instance=instance)
@@ -115,16 +124,14 @@ def scan(request):
 
         for link in links:
             link_href = link.get('href')
-            if link_href and link_href != '#':
-                if link_href.startswith('/'):
-                    link_href = site.root_url + link_href
+            link_href = clean_url(link_href)
+            if link_href:
                 to_crawl.add(link_href)
 
         for image in images:
             image_src = link.get('src')
-            if image_src and image_src != '#':
-                if image_src.startswith('/'):
-                    image_src = site.root_url + link_href
+            image_src = clean_url(image_src)
+            if image_src:
                 to_crawl.add(image_src)
 
         for link in to_crawl - have_crawled:
