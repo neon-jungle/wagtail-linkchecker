@@ -94,7 +94,6 @@ def scan(request):
             continue
         r1 = requests.get(url, verify=True)
         if r1.status_code not in range(100, 300):
-            print('yep!!!!')
             broken_links.add(Link(url, page, site=site, status_code=r1.status_code))
             continue
         have_crawled.add(url)
@@ -125,9 +124,7 @@ def scan(request):
             except requests.exceptions.RequestException as e:
                 broken_links.add(Link(link, page, site=site, error=type(e).__name__ + ': ' + str(e)))
                 continue
-            print('I scanned ' + str(link))
             if r2.status_code not in range(100, 300):
-                print('yep!!!!')
                 broken_links.add(Link(link, page, site=site, status_code=r2.status_code))
             have_crawled.add(link)
 
