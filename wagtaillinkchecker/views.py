@@ -3,7 +3,7 @@ from http import client
 import requests
 from bs4 import BeautifulSoup
 
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.utils.lru_cache import lru_cache
 from wagtail.wagtailadmin import messages
 from wagtail.wagtailadmin.edit_handlers import (ObjectList,
@@ -67,6 +67,8 @@ def index(request):
         if form.is_valid():
             edit_handler = EditHandler(instance=SitePreferences, form=form)
             form.save()
+            messages.success(request, 'The form has been successfully saved.')
+            return redirect('wagtaillinkchecker')
         else:
             messages.error(request, 'The form could not be saved due to validation errors')
     else:
