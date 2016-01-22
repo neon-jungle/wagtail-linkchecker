@@ -6,12 +6,7 @@ Install wagtail-linkchecker using setuptools
 with open('README.rst', 'r') as f:
     readme = f.read()
 
-try:
-    from setuptools import setup, find_packages
-except ImportError:
-    from ez_setup import use_setuptools
-    use_setuptools()
-    from setuptools import setup, find_packages
+from setuptools import setup, find_packages
 
 setup(
     name='wagtail-linkchecker',
