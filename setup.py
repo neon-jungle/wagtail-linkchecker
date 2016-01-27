@@ -6,11 +6,11 @@ Install wagtail-linkchecker using setuptools
 with open('README.rst', 'r') as f:
     readme = f.read()
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name='wagtail-linkchecker',
-    version='0.1.0',
+    version='0.1.1',
     description="A tool to assist with finding broken links on your wagtail site.",
     long_description=readme,
     author='Liam Brenner',
