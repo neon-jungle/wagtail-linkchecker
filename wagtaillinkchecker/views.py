@@ -22,12 +22,12 @@ def index(request):
     site = Site.find_for_request(request)
     instance = SitePreferences.objects.filter(site=site).first()
     form = SitePreferencesForm(instance=instance)
+    form.instance.site = Site.find_for_request(request)
     EditHandler = get_edit_handler(SitePreferences)
 
     if request.method == "POST":
         instance = SitePreferences.objects.filter(site=site).first()
         form = SitePreferencesForm(request.POST, instance=instance)
-        form.instance.site = site
         if form.is_valid():
             edit_handler = EditHandler(instance=SitePreferences, form=form)
             form.save()
