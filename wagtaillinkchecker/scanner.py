@@ -1,4 +1,9 @@
-from http import client
+
+
+try:
+    from http import client as client
+except ImportError:
+    import httplib as client
 
 import requests
 from bs4 import BeautifulSoup

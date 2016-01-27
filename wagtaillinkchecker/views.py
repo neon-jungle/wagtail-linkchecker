@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from django.shortcuts import redirect, render
 from django.utils.lru_cache import lru_cache
 from wagtail.wagtailadmin import messages
