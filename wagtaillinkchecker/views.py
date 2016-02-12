@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from django.shortcuts import redirect, render
 from django.utils.lru_cache import lru_cache
 from wagtail.wagtailadmin import messages
@@ -20,6 +22,7 @@ def index(request):
     site = Site.find_for_request(request)
     instance = SitePreferences.objects.filter(site=site).first()
     form = SitePreferencesForm(instance=instance)
+    form.instance.site = Site.find_for_request(request)
     EditHandler = get_edit_handler(SitePreferences)
 
     if request.method == "POST":
