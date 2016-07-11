@@ -5,8 +5,12 @@ try:
 except ImportError:
     import httplib as client
 
+from time import sleep
+
 import requests
 from bs4 import BeautifulSoup
+
+from django.conf import settings
 
 
 class Link(Exception):
@@ -46,6 +50,8 @@ class Link(Exception):
 
 
 def get_url(url, page, site):
+    if hasattr(settings, 'LINKCHECKER_DELAY'):
+        sleep(settings.LINKCHECKER_DELAY)
     try:
         response = requests.get(url, verify=True)
     except requests.exceptions.ConnectionError as e:
