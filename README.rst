@@ -27,6 +27,10 @@ Utilising the ``requests`` and ``BeautifulSoup`` libraries, requests will be mad
 is received, and if no appropriate response is received, once the scan is complete, all broken links along with their status codes and
 reasons will appear.
 
+Configuration
+-------------
+Currently you can configure a time for the scanning script to wait between URLs in seconds with the django setting ``LINKCHECKER_DELAY``.
+
 Automated Scanning
 ------------------
 If you want automated scanning to work you **HAVE** to set up a cron job. The cron job will need to run the management command ``linkchecker`` at
