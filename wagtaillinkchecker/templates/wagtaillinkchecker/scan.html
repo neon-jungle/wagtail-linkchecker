@@ -1,0 +1,47 @@
+{% extends "wagtailadmin/base.html" %}
+{% load i18n %}
+{% block titletag %}{% trans "Link Checker Results" %}{% endblock %}
+{% block bodyclass %}menu-linkchecker{% endblock %}
+{% block content %}
+
+    {% include "wagtailadmin/shared/header.html" with title="Link Checker" icon="link" %}
+
+    <div class="nice-padding">
+		{% if scan.links.non_scanned_links.exists %}
+		<h2>{% blocktrans %}Links To Be Scanned {% endblocktrans %}</h2>
+		{% for link in scan.links.non_scanned_links %}
+		<p>
+			<a href='{{link}}' target="_blank">{{link}}</a>{% if link.page_is_deleted %} - {% blocktrans %}PAGE CONTAINING LINK WAS DELETED{% endblocktrans %}{% endif %}
+		</p>
+		{% endfor %}
+		{% endif %}
+		<h2>{% blocktrans %}Results{% endblocktrans %}</h2>
+		<hr />
+		<h2>{% blocktrans %}Broken Links{% endblocktrans %}</h2>
+		{% if scan.links.broken_links.exists %}
+		{% for link in scan.links.broken_links.all %}
+		<p>
+			<a href='{{link}}' target="_blank">{{link}}</a>{% if link.page %} - <a href="{% url 'wagtailadmin_pages:edit' link.page.id %}" target="_blank" class="button button-small">{% blocktrans %}Edit page containing this link{% endblocktrans %}</a>{% endif %}
+			{% if link.status_code %}<br /><b>{% blocktrans %}Status Code{% endblocktrans %}: </b>{{link.status_code}}{% endif %}
+			{% if link.error_text %}<br /><b>{% blocktrans %}Error{% endblocktrans %}: </b>{{link.error_text}}{% endif %}
+			{% if link.page_is_deleted %}<br /><b>{% blocktrans %}Info: </b>PAGE CONTAINING THIS LINK WAS DELETED{% endblocktrans %}{% endif %}
+		</p>
+		{% endfor %}
+		{% else %}
+		<p>{% blocktrans %}Congratulations, there are no broken links!{% endblocktrans %}</p>
+		{% endif %}
+
+		<h2>Working Links</h2>
+		{% if scan.links.working_links.exists %}
+		{% for link in scan.links.working_links.all %}
+		<p>
+			<a href='{{link}}' target="_blank">{{link}}</a>{% if link.page_is_deleted %} - {% blocktrans %}PAGE CONTAINING LINK WAS DELETED {% endblocktrans %}{% endif %}
+		</p>
+		{% endfor %}
+		{% else %}
+		<p>{% blocktrans %}There are no working links!{% endblocktrans %}</p>
+		{% endif %}
+
+        <a href="{% url 'wagtaillinkchecker' %}" class="button bicolor icon icon-arrow-left">{% blocktrans %}Back{% endblocktrans %}</a>
+    </div>
+{% endblock %}

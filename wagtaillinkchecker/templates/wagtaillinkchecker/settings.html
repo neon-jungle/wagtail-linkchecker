@@ -11,15 +11,16 @@
             </div>
         </div>
         <div class='right'>
-			<a href="{% url 'wagtaillinkchecker_runscan' %}" class="button">Conduct Scan</a>
-			<a href="{% url 'wagtaillinkchecker_settings' %}" class="button bicolor icon icon-cogs ">Settings</a>
+			<a href="{% url 'wagtaillinkchecker' %}" class="button">{% blocktrans %}Scan Index{% endblocktrans %}</a>
         </div>
     </div>
 </header>
 
-{% if scans.exists %}
-{% include 'wagtaillinkchecker/scan_list.html' %}
-{% else %}
-	<div class="nice-padding">No scans yet!</div>
-{% endif %}
+<div class="nice-padding">
+	<form method="POST" action=''>
+		{% csrf_token %}
+		{{edit_handler.render_form_content}}
+		<input type="submit" value="{% trans 'Save' %}" class="button" />
+	</form>
+</div>
 {% endblock %}

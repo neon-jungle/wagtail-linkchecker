@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import SitePreferences
+from wagtaillinkchecker.models import SitePreferences
 
 
 class SitePreferencesForm(forms.ModelForm):

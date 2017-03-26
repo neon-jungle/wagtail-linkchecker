@@ -1,0 +1,61 @@
+{% load i18n %}
+<table class="listing full-width">
+            <colgroup>
+            <thead><tr class="table-headers">
+                <th class="title">{% blocktrans %}Date{% endblocktrans %}</th>
+                <th class='amount'>{% blocktrans %}Links Scanned{% endblocktrans %}</th>
+				<th class='amount'>{% blocktrans %}Results{% endblocktrans %}</th>
+                <th class='avaliablity'>{% blocktrans %}Completed{% endblocktrans %}</th>
+            </tr></thead>
+            <tbody>
+            {% for scan in page %}
+                <tr>
+                    <td class="title">
+                        <h2>
+                            <a href="{% url 'wagtaillinkchecker_scan' scan_pk=scan.pk %}">{{scan.scan_started}}</a>
+                        </h2>
+                        <ul class="actions">
+                            <li><a href="{% url 'wagtaillinkchecker_scan' scan_pk=scan.pk %}" class="button button-small button-secondary yes">{% trans 'View Scan' %}</a></li>
+                            <li><a href="{% url 'wagtaillinkchecker_delete' scan_pk=scan.pk %}" class="button button-small no button-secondary yes">{% trans 'Delete Scan' %}</a></li>
+                        </ul>
+                    </td>
+                    <td class='amount'>{{scan.links.valid.count}}</td>
+					<td class='amount'>{% blocktrans with broken_links=scan.links.broken_links.count links=scan.links.count %}{{broken_links}} broken links out of {{links}} links{% endblocktrans %}</td>
+                    <td
+						style='color:{% if scan.is_finished %}green{% else %}orange{% endif %};font-weight:bold;'
+						class='avaliablity'>
+					{% if scan.is_finished %}
+					{% blocktrans %}Completed{% endblocktrans %}
+					{% else %}
+					{% blocktrans with links=scan.links.count %}{{links}} links found{% endblocktrans %} <br />
+					{% blocktrans with crawled_links=scan.links.crawled_links.count %}{{crawled_links}} links crawled{% endblocktrans %}<br />
+					{% blocktrans with broken_links=scan.links.broken_links.count %}{{broken_links}} broken links found{% endblocktrans %} <br />
+					{% endif %}
+					</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+</table>
+<div class="pagination">
+	<p>{% blocktrans with number=page.number total=paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</p>
+	<ul>
+		{% if page.has_previous %}
+		<li class="prev">
+
+
+					<a href="?page={{page.previous_page_number}}" class="icon icon-arrow-left">{% blocktrans %}Previous{% endblocktrans %}</a>
+
+
+		</li>
+		{% endif %}
+		{% if page.has_next %}
+		<li class="next">
+
+
+					<a href="?page={{page.next_page_number}}" class="icon icon-arrow-right-after">{% blocktrans %}Next{% endblocktrans %}</a>
+
+
+		</li>
+		{% endif %}
+	</ul>
+</div>

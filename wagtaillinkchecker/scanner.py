@@ -1,16 +1,30 @@
-
-
 try:
     from http import client as client
 except ImportError:
     import httplib as client
 
-from time import sleep
-
 import requests
-from bs4 import BeautifulSoup
+from django.utils.translation import ugettext_lazy as _
+from wagtaillinkchecker import HTTP_STATUS_CODES
 
-from django.conf import settings
+
+def get_celery_worker_status():
+    ERROR_KEY = "ERROR"
+    try:
+        from celery.task.control import inspect
+        insp = inspect()
+        d = insp.stats()
+        if not d:
+            d = {ERROR_KEY: 'No running Celery workers were found.'}
+    except IOError as e:
+        from errno import errorcode
+        msg = "Error connecting to the backend: " + str(e)
+        if len(e.args) > 0 and errorcode.get(e.args[0]) == 'ECONNREFUSED':
+            msg += ' Check that the RabbitMQ server is running.'
+        d = {ERROR_KEY: msg}
+    except ImportError as e:
+        d = {ERROR_KEY: str(e)}
+    return d
 
 
 class Link(Exception):
@@ -29,12 +43,12 @@ class Link(Exception):
         elif self.status_code in range(100, 300):
             message = "Success"
         elif self.status_code in range(500, 600) and self.url.startswith(self.site.root_url):
-            message = str(self.status_code) + ': ' + 'Internal server error, please notify the site administrator.'
+            message = str(self.status_code) + ': ' + _('Internal server error, please notify the site administrator.')
         else:
             try:
                 message = str(self.status_code) + ': ' + client.responses[self.status_code] + '.'
             except KeyError:
-                message = str(self.status_code) + ': ' + 'Unknown error.'
+                message = str(self.status_code) + ': ' + _('Unknown error.')
         return message
 
     def __str__(self):
@@ -50,17 +64,45 @@ class Link(Exception):
 
 
 def get_url(url, page, site):
-    if hasattr(settings, 'LINKCHECKER_DELAY'):
-        sleep(settings.LINKCHECKER_DELAY)
+    data = {
+        'url': url,
+        'page': page,
+        'site': site,
+        'error': False,
+        'invalid_schema': False
+    }
+    response = None
     try:
         response = requests.get(url, verify=True)
+        data['response'] = response
+    except (requests.exceptions.InvalidSchema, requests.exceptions.MissingSchema):
+        data['invalid_schema'] = True
+        return data
     except requests.exceptions.ConnectionError as e:
-        raise Link(url, page, error='There was an error connecting to this site.')
+        data['error'] = True
+        data['error_message'] = _('There was an error connecting to this site')
+        return data
     except requests.exceptions.RequestException as e:
-        raise Link(url, page, site=site, error=type(e).__name__ + ': ' + str(e))
-    if response.status_code not in range(100, 300):
-        raise Link(url, page, site=site, status_code=response.status_code)
-    return response
+        data['error'] = True
+        data['status_code'] = response.status_code
+        data['error_message'] = type(e).__name__ + ': ' + str(e)
+        return data
+
+    else:
+        if response.status_code not in range(100, 400):
+            error_message_for_status_code = HTTP_STATUS_CODES.get(response.status_code)
+            data['error'] = True
+            data['status_code'] = response.status_code
+            if error_message_for_status_code:
+                data['error_message'] = error_message_for_status_code[0]
+            else:
+                if response.status_code in range(400, 500):
+                    data['error_message'] = 'Client error'
+                elif response.status_code in range(500, 600):
+                    data['error_message'] = 'Server Error'
+                else:
+                    data['error_message'] = "Error: Unknown HTTP Status Code '{0}'".format(response.status_code)
+        return data
 
 
 def clean_url(url, site):
@@ -73,41 +115,14 @@ def clean_url(url, site):
 
 
 def broken_link_scan(site):
+    from wagtaillinkchecker.models import Scan, ScanLink
     pages = site.root_page.get_descendants(inclusive=True).live().public()
-    to_crawl = set()
-    have_crawled = set()
-    broken_links = set()
+    scan = Scan.objects.create(site=site)
 
     for page in pages:
-        url = page.full_url
-        if not url:
-            continue
         try:
-            r1 = get_url(url, page, site)
-        except Link as bad_link:
-            broken_links.add(bad_link)
-            continue
-        have_crawled.add(url)
-        soup = BeautifulSoup(r1.content)
-        links = soup.find_all('a')
-        images = soup.find_all('img')
-
-        for link in links:
-            link_href = link.get('href')
-            link_href = clean_url(link_href, site)
-            if link_href:
-                to_crawl.add(link_href)
-
-        for image in images:
-            image_src = link.get('src')
-            image_src = clean_url(image_src, site)
-            if image_src:
-                to_crawl.add(image_src)
-
-        for link in to_crawl - have_crawled:
-            try:
-                get_url(link, page, site)
-            except Link as bad_link:
-                broken_links.add(bad_link)
-            have_crawled.add(link)
-    return broken_links
+            ScanLink.objects.get(url=page.full_url, scan=scan)
+            return
+        except ScanLink.DoesNotExist:
+            link = ScanLink.objects.create(url=page.full_url, page=page, scan=scan)
+            link.check_link()
