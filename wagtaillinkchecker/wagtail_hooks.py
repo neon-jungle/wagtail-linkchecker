@@ -5,7 +5,7 @@ from django.core import urlresolvers
 from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
 
-from . import urls
+from wagtaillinkchecker import urls
 
 
 @hooks.register('register_admin_urls')

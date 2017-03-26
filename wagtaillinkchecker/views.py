@@ -7,9 +7,9 @@ from wagtail.wagtailadmin.edit_handlers import (ObjectList,
                                                 extract_panel_definitions_from_model_class)
 from wagtail.wagtailcore.models import Site
 
-from .forms import SitePreferencesForm
-from .models import SitePreferences
-from .scanner import broken_link_scan
+from wagtaillinkchecker.forms import SitePreferencesForm
+from wagtaillinkchecker.models import SitePreferences
+from wagtaillinkchecker.scanner import broken_link_scan
 
 
 @lru_cache()
