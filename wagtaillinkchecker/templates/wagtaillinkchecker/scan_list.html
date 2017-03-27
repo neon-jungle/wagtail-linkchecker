@@ -20,7 +20,17 @@
                     </td>
                     <td class='amount'>{{scan.links.count}}</td>
 					<td class='amount'>{{scan.broken_link_count}} broken links out of {{scan.links.count}} links</td>
-                    <td style='color:{% if scan.is_finished %}green{% else %}red{% endif %};font-weight:bold;'class='avaliablity'>{% if scan.is_finished %}Completed{% else %}In Progress{% endif %}</td>
+                    <td
+						style='color:{% if scan.is_finished %}green{% else %}orange{% endif %};font-weight:bold;'
+						class='avaliablity'>
+					{% if scan.is_finished %}
+					Completed
+					{% else %}
+					{{scan.links.count}} links found <br />
+					{{scan.crawled_links.count}} links crawled <br />
+					{{scan.broken_link_count}} broken links found <br />
+					{% endif %}
+					</td>
                 </tr>
             {% endfor %}
             </tbody>

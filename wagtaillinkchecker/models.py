@@ -27,10 +27,13 @@ class Scan(models.Model):
         return ScanLink.objects.create(scan=self, url=url, page=page)
 
     def links(self):
-        return ScanLink.objects.filter(scan=self)
+        return ScanLink.objects.filter(scan=self, invalid=False)
 
     def broken_links(self):
         return self.links.filter(broken=True)
+
+    def crawled_links(self):
+        return self.links.filter(crawled=True)
 
     def invalid_links(self):
         return self.links.filter(invalid=True)
