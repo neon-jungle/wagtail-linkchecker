@@ -32,8 +32,11 @@ class Scan(models.Model):
     def broken_links(self):
         return self.links.filter(broken=True)
 
+    def invalid_links(self):
+        return self.links.filter(invalid=True)
+
     def working_links(self):
-        return self.links.filter(broken=False)
+        return self.links.filter(broken=False, invalid=False)
 
     def broken_link_count(self):
         return self.broken_links().count()
@@ -48,6 +51,9 @@ class ScanLink(models.Model):
 
     # If the link has been crawled
     crawled = models.BooleanField(default=False)
+
+    # Link is not necessarily broken, it is invalid (eg a tel link or not an actual url)
+    invalid = models.BooleanField(default=False)
 
     # If the link is broken or not
     broken = models.BooleanField(default=False)

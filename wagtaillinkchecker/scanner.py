@@ -53,26 +53,35 @@ def get_url(url, page, site):
         'page': page,
         'site': site,
         'error': False,
+        'invalid_schema': False
     }
     try:
         response = requests.get(url, verify=True)
         data['response'] = response
+        return data
+    except (requests.exceptions.InvalidSchema, requests.exceptions.MissingSchema):
+        data['invalid_schema'] = True
+        return data
     except requests.exceptions.ConnectionError as e:
         data['error'] = True
         data['error_message'] = 'There was an error connecting to this site.'
+        return data
     except requests.exceptions.RequestException as e:
         data['error'] = True
         data['status_code'] = response.status_code
         data['error_message'] = type(e).__name__ + ': ' + str(e)
+        return data
+
     if 'response' in locals():
         if response.status_code not in range(100, 300):
             data['error'] = True
             data['status_code'] = response.status_code
             data['error_message'] = client.responses[response.status_code]
+            return data
     else:
         data['error'] = True
         data['error_message'] = 'There was an error connecting to this site.'
-    return data
+        return data
 
 
 def clean_url(url, site):

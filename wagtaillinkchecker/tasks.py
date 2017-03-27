@@ -11,13 +11,16 @@ def check_link(link_pk):
     link = ScanLink.objects.get(pk=link_pk)
     if isinstance(link, ScanLink):
         site = link.scan.site
+        print(link.url, link.page)
         url = get_url(link.url, link.page, site)
         link.status_code = url.get('status_code')
-        print(link.page.full_url)
-        print(link.url)
         if url['error']:
             link.broken = True
             link.error_text = url['error_message']
+
+        elif url['invalid_schema']:
+            link.invalid = True
+            link.error_text = 'Link was invalid'
 
         elif link.page.full_url == link.url:
             soup = BeautifulSoup(url['response'].content)
