@@ -11,7 +11,6 @@ def check_link(link_pk):
     link = ScanLink.objects.get(pk=link_pk)
     if isinstance(link, ScanLink):
         site = link.scan.site
-        print(link.url, link.page)
         url = get_url(link.url, link.page, site)
         link.status_code = url.get('status_code')
         if url['error']:
