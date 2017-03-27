@@ -48,15 +48,15 @@ class Link(Exception):
 
 
 def get_url(url, page, site):
+    data = {
+        'url': url,
+        'page': page,
+        'site': site,
+        'error': False,
+    }
     try:
         response = requests.get(url, verify=True)
-        data = {
-            'response': response,
-            'url': url,
-            'page': page,
-            'site': site,
-            'error': False,
-        }
+        data['response'] = response
     except requests.exceptions.ConnectionError as e:
         data['error'] = True
         data['error_message'] = 'There was an error connecting to this site.'
@@ -64,10 +64,14 @@ def get_url(url, page, site):
         data['error'] = True
         data['status_code'] = response.status_code
         data['error_message'] = type(e).__name__ + ': ' + str(e)
-    if response.status_code not in range(100, 300):
+    if 'response' in locals():
+        if response.status_code not in range(100, 300):
+            data['error'] = True
+            data['status_code'] = response.status_code
+            data['error_message'] = client.responses[response.status_code]
+    else:
         data['error'] = True
-        data['status_code'] = response.status_code
-        data['error_message'] = client.responses[response.status_code]
+        data['error_message'] = 'There was an error connecting to this site.'
     return data
 
 

@@ -1,0 +1,27 @@
+{% load i18n %}
+<table class="listing full-width">
+            <colgroup>
+            <thead><tr class="table-headers">
+                <th class="title">Date</th>
+                <th class='amount'>Links Scanned</th>
+				<th class='amount'>Results</th>
+                <th class='avaliablity'>Completed</th>
+            </tr></thead>
+            <tbody>
+            {% for scan in scans %}
+                <tr>
+                    <td class="title">
+                        <h2>
+                            <a href="{% url 'wagtaillinkchecker_scan' scan_pk=scan.pk %}">{{scan.scan_started}}</a>
+                        </h2>
+                        <ul class="actions">
+                            <li><a href="{% url 'wagtaillinkchecker_scan' scan_pk=scan.pk %}" class="button button-small button-secondary yes">{% trans 'View Scan' %}</a></li>
+                        </ul>
+                    </td>
+                    <td class='amount'>{{scan.links.count}}</td>
+					<td class='amount'>{{scan.broken_link_count}} broken links out of {{scan.links.count}} links</td>
+                    <td style='color:{% if scan.is_finished %}green{% else %}red{% endif %};font-weight:bold;'class='avaliablity'>{% if scan.is_finished %}Completed{% else %}In Progress{% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+</table>

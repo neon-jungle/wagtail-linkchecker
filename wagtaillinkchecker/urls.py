@@ -7,6 +7,10 @@ from wagtaillinkchecker import views
 urlpatterns = [
     url(r'^$', views.index,
         name='wagtaillinkchecker'),
-    url(r'^scan/$', views.scan,
+    url(r'^settings/$', views.settings,
+        name='wagtaillinkchecker_settings'),
+    url(r'^scan/$', views.run_scan,
+        name='wagtaillinkchecker_runscan'),
+    url(r'^scan/(?P<scan_pk>\d+)/$', views.scan,
         name='wagtaillinkchecker_scan'),
 ]

@@ -13,6 +13,7 @@ class SitePreferences(models.Model):
 
 class Scan(models.Model):
     scan_finished = models.DateTimeField(blank=True, null=True)
+    scan_started = models.DateTimeField(auto_now_add=True)
     site = models.ForeignKey(Site, db_index=True, editable=False)
 
     @property
@@ -21,6 +22,24 @@ class Scan(models.Model):
             return True
         else:
             return False
+
+    def add_link(self, url=None, page=None):
+        return ScanLink.objects.create(scan=self, url=url, page=page)
+
+    def links(self):
+        return ScanLink.objects.filter(scan=self)
+
+    def broken_links(self):
+        return self.links.filter(broken=True)
+
+    def working_links(self):
+        return self.links.filter(broken=False)
+
+    def broken_link_count(self):
+        return self.broken_links().count()
+
+    def non_scanned_links(self):
+        return self.links.filter(crawled=False)
 
 
 class ScanLink(models.Model):
@@ -42,6 +61,9 @@ class ScanLink(models.Model):
 
     class Meta:
         unique_together = [('url', 'scan')]
+
+    def __str__(self):
+        return self.url
 
     def check_link(self):
         from wagtaillinkchecker.tasks import check_link

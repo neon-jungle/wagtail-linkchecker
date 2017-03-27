@@ -8,8 +8,9 @@ from wagtail.wagtailadmin.edit_handlers import (ObjectList,
 from wagtail.wagtailcore.models import Site
 
 from wagtaillinkchecker.forms import SitePreferencesForm
-from wagtaillinkchecker.models import SitePreferences
+from wagtaillinkchecker.models import SitePreferences, Scan
 from wagtaillinkchecker.scanner import broken_link_scan
+from django.shortcuts import get_object_or_404
 
 
 @lru_cache()
@@ -18,7 +19,24 @@ def get_edit_handler(model):
     return ObjectList(panels).bind_to_model(model)
 
 
+def scan(request, scan_pk):
+    scan = get_object_or_404(Scan, pk=scan_pk)
+
+    return render(request, 'wagtaillinkchecker/scan.html', {
+        'scan': scan
+    })
+
+
 def index(request):
+    site = Site.find_for_request(request)
+    scans = Scan.objects.filter(site=site)
+
+    return render(request, 'wagtaillinkchecker/index.html', {
+        'scans': scans
+    })
+
+
+def settings(request):
     site = Site.find_for_request(request)
     instance = SitePreferences.objects.filter(site=site).first()
     form = SitePreferencesForm(instance=instance)
@@ -32,24 +50,22 @@ def index(request):
         if form.is_valid():
             edit_handler = EditHandler(instance=SitePreferences, form=form)
             form.save()
-            messages.success(request, 'The form has been successfully saved.')
-            return redirect('wagtaillinkchecker')
+            messages.success(request, 'Link checker settings have been updated.')
+            return redirect('wagtaillinkchecker_settings')
         else:
             messages.error(request, 'The form could not be saved due to validation errors')
     else:
         form = SitePreferencesForm(instance=instance)
         edit_handler = EditHandler(instance=SitePreferences, form=form)
 
-    return render(request, 'wagtaillinkchecker/index.html', {
+    return render(request, 'wagtaillinkchecker/settings.html', {
         'form': form,
         'edit_handler': edit_handler,
     })
 
 
-def scan(request):
+def run_scan(request):
     site = Site.find_for_request(request)
-    broken_links = broken_link_scan(site)
+    broken_link_scan(site)
 
-    return render(request, 'wagtaillinkchecker/results.html', {
-        'broken_links': broken_links,
-    })
+    return redirect('wagtaillinkchecker')
