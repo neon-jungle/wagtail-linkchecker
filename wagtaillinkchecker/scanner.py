@@ -6,7 +6,6 @@ except ImportError:
     import httplib as client
 
 import requests
-from wagtail.wagtailadmin import messages
 
 
 def get_celery_worker_status():

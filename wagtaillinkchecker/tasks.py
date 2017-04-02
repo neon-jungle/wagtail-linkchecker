@@ -22,7 +22,7 @@ def check_link(link_pk):
             link.error_text = 'Link was invalid'
 
         elif link.page.full_url == link.url:
-            soup = BeautifulSoup(url['response'].content)
+            soup = BeautifulSoup(url['response'].content, 'html5lib')
             anchors = soup.find_all('a')
             images = soup.find_all('img')
 
