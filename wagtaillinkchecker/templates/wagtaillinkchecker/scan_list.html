@@ -8,7 +8,7 @@
                 <th class='avaliablity'>Completed</th>
             </tr></thead>
             <tbody>
-            {% for scan in scans %}
+            {% for scan in page %}
                 <tr>
                     <td class="title">
                         <h2>
@@ -35,3 +35,26 @@
             {% endfor %}
             </tbody>
 </table>
+<div class="pagination">
+	<p>{% blocktrans with number=page.number total=paginator.num_pages %}Page {{ number }} of {{ total }}{% endblocktrans %}</p>
+	<ul>
+		{% if page.has_previous %}
+		<li class="prev">
+
+
+					<a href="?page={{page.previous_page_number}}" class="icon icon-arrow-left">{% blocktrans %}Previous{% endblocktrans %}</a>
+
+
+		</li>
+		{% endif %}
+		{% if page.has_next %}
+		<li class="next">
+
+
+					<a href="?page={{page.next_page_number}}" class="icon icon-arrow-right-after">{% blocktrans %}Next{% endblocktrans %}</a>
+
+
+		</li>
+		{% endif %}
+	</ul>
+</div>

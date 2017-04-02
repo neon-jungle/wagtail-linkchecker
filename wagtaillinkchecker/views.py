@@ -9,8 +9,9 @@ from wagtail.wagtailcore.models import Site
 
 from wagtaillinkchecker.forms import SitePreferencesForm
 from wagtaillinkchecker.models import SitePreferences, Scan
-from wagtaillinkchecker.scanner import broken_link_scan
+from wagtaillinkchecker.scanner import broken_link_scan, get_celery_worker_status
 from django.shortcuts import get_object_or_404
+from wagtaillinkchecker.pagination import paginate
 
 
 @lru_cache()
@@ -29,9 +30,16 @@ def scan(request, scan_pk):
 
 def index(request):
     site = Site.find_for_request(request)
-    scans = Scan.objects.filter(site=site)
+    scans = Scan.objects.filter(site=site).order_by('-scan_started')
+
+    paginator, page = paginate(
+        request,
+        scans,
+        per_page=8)
 
     return render(request, 'wagtaillinkchecker/index.html', {
+        'page': page,
+        'paginator': paginator,
         'scans': scans
     })
 
@@ -66,6 +74,10 @@ def settings(request):
 
 def run_scan(request):
     site = Site.find_for_request(request)
-    broken_link_scan(site)
+    celery_status = get_celery_worker_status()
+    if 'ERROR' not in celery_status:
+        broken_link_scan(site)
+    else:
+        messages.warning(request, 'No celery workers are running, the scan was not conducted.')
 
     return redirect('wagtaillinkchecker')

@@ -48,8 +48,6 @@ def check_link(link_pk):
         link.crawled = True
         link.save()
 
-        non_scanned_links = link.scan.non_scanned_links()
-        print(non_scanned_links)
         if link.scan.non_scanned_links():
             pass
         else:

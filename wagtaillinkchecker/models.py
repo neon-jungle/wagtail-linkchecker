@@ -39,7 +39,7 @@ class Scan(models.Model):
         return self.links.filter(invalid=True)
 
     def working_links(self):
-        return self.links.filter(broken=False, invalid=False)
+        return self.links.filter(broken=False, crawled=True)
 
     def broken_link_count(self):
         return self.broken_links().count()

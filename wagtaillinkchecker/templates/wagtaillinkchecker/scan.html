@@ -7,6 +7,16 @@
     {% include "wagtailadmin/shared/header.html" with title="Link Checker" icon="link" %}
 
     <div class="nice-padding">
+		<h2>Links To Be Scanned</h2>
+		{% if scan.non_scanned_links.exists %}
+		{% for link in scan.non_scanned_links.all %}
+		<p>
+			<a href='{{link}}' target="_blank">{{link}}</a> - {{link.crawled}}
+		</p>
+		{% endfor %}
+		{% endif %}
+		<h2>Results</h2>
+		<hr />
 		<h2>Broken Links</h2>
 		{% if scan.broken_links.exists %}
 		{% for link in scan.broken_links.all %}
