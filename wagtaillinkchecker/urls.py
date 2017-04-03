@@ -13,4 +13,6 @@ urlpatterns = [
         name='wagtaillinkchecker_runscan'),
     url(r'^scan/(?P<scan_pk>\d+)/$', views.scan,
         name='wagtaillinkchecker_scan'),
+    url(r'^scan/(?P<scan_pk>\d+)/delete$', views.delete,
+        name='wagtaillinkchecker_delete'),
 ]

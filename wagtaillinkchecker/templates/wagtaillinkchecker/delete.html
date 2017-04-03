@@ -1,0 +1,23 @@
+{% extends "wagtailadmin/base.html" %}
+{% load i18n %}
+{% block titletag %}{% trans "Link Checker" %}{% endblock %}
+{% block content %}
+
+	{% trans "Delete" as new_str %}
+	{% include "wagtailadmin/shared/header.html" with title=new_str subtitle=scan icon="link" %}
+
+	<div class="row row-flush nice-padding">
+		<form action="{% url 'wagtaillinkchecker_delete' scan_pk=scan.pk %}" method="POST">
+			{% csrf_token %}
+			<p>{% blocktrans %}Are you sure you want to delete these scan results?{% endblocktrans %}</p>
+			<button class='button' type="submit"> {% trans 'Yes, delete them' %} </button>
+		</form>
+	</div>
+{% endblock %}
+
+{% block extra_css %}
+	{% include "wagtailadmin/pages/_editor_css.html" %}
+{% endblock %}
+{% block extra_js %}
+	{% include "wagtailadmin/pages/_editor_js.html" %}
+{% endblock %}

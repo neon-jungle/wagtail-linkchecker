@@ -16,6 +16,7 @@
                         </h2>
                         <ul class="actions">
                             <li><a href="{% url 'wagtaillinkchecker_scan' scan_pk=scan.pk %}" class="button button-small button-secondary yes">{% trans 'View Scan' %}</a></li>
+                            <li><a href="{% url 'wagtaillinkchecker_delete' scan_pk=scan.pk %}" class="button button-small no button-secondary yes">{% trans 'Delete Scan' %}</a></li>
                         </ul>
                     </td>
                     <td class='amount'>{{scan.links.count}}</td>

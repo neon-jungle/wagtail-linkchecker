@@ -26,8 +26,11 @@ class Scan(models.Model):
     def add_link(self, url=None, page=None):
         return ScanLink.objects.create(scan=self, url=url, page=page)
 
+    def all_links(self):
+        return ScanLink.objects.filter(scan=self)
+
     def links(self):
-        return ScanLink.objects.filter(scan=self, invalid=False)
+        return self.all_links.filter(invalid=False)
 
     def broken_links(self):
         return self.links.filter(broken=True)
@@ -46,6 +49,12 @@ class Scan(models.Model):
 
     def non_scanned_links(self):
         return self.links.filter(crawled=False)
+
+    def result(self):
+        return '{0} broken links found out of {1} links'.format(self.broken_link_count(), self.links.count())
+
+    def __str__(self):
+        return 'Scan - {0}'.format(self.scan_started.strftime('%d/%m/%Y'))
 
 
 class ScanLink(models.Model):

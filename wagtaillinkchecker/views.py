@@ -44,6 +44,21 @@ def index(request):
     })
 
 
+def delete(request, scan_pk):
+    scan = get_object_or_404(Scan, pk=scan_pk)
+
+    if request.method == 'POST':
+        for link in scan.all_links():
+            link.delete()
+        scan.delete()
+        messages.success(request, 'The scan results were successfully deleted.')
+        return redirect('wagtaillinkchecker')
+
+    return render(request, 'wagtaillinkchecker/delete.html', {
+        'scan': scan,
+    })
+
+
 def settings(request):
     site = Site.find_for_request(request)
     instance = SitePreferences.objects.filter(site=site).first()
