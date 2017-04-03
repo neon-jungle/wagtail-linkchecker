@@ -74,7 +74,6 @@ def get_url(url, page, site):
     try:
         response = requests.get(url, verify=True)
         data['response'] = response
-        return data
     except (requests.exceptions.InvalidSchema, requests.exceptions.MissingSchema):
         data['invalid_schema'] = True
         return data
@@ -93,7 +92,7 @@ def get_url(url, page, site):
             data['error'] = True
             data['status_code'] = response.status_code
             data['error_message'] = client.responses[response.status_code]
-            return data
+        return data
     else:
         data['error'] = True
         data['error_message'] = 'There was an error connecting to this site.'
