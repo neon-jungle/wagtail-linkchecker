@@ -1,7 +1,8 @@
 from django.db import models
 from wagtail.wagtailcore.models import Site
 from wagtail.wagtailcore.models import Page
-
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 class SitePreferences(models.Model):
     site = models.OneToOneField(Site, unique=True, db_index=True, editable=False)
@@ -27,25 +28,23 @@ class Scan(models.Model):
         return ScanLink.objects.create(scan=self, url=url, page=page)
 
     def all_links(self):
+        """All links for a scan."""
         return ScanLink.objects.filter(scan=self)
 
-    def links(self):
-        return self.all_links.filter(invalid=False)
+    def valid_links(self):
+        return self.all_links().filter(invalid=False)
 
     def broken_links(self):
-        return self.links.filter(broken=True)
+        return self.valid_links().filter(broken=True)
 
     def crawled_links(self):
-        return self.links.filter(crawled=True)
+        return self.valid_links().filter(crawled=True)
 
     def invalid_links(self):
-        return self.links.filter(invalid=True)
+        return self.valid_links().filter(invalid=True)
 
     def working_links(self):
-        return self.links.filter(broken=False, crawled=True)
-
-    def broken_link_count(self):
-        return self.broken_links().count()
+        return self.valid_links().filter(broken=False, crawled=True)
 
     def non_scanned_links(self):
         return self.links.filter(crawled=False)
@@ -75,7 +74,12 @@ class ScanLink(models.Model):
     error_text = models.TextField(blank=True, null=True)
 
     # Page where link was found
-    page = models.ForeignKey(Page)
+    page = models.ForeignKey(Page, null=True, on_delete=models.SET_NULL)
+
+    # Page this link was on was deleted
+    page_deleted = models.BooleanField(default=False)
+
+    page_slug = models.CharField(max_length=128, null=True, blank=True)
 
     class Meta:
         unique_together = [('url', 'scan')]
@@ -83,9 +87,25 @@ class ScanLink(models.Model):
     def __str__(self):
         return self.url
 
+    @property
+    def page_is_deleted(self):
+        if self.page_deleted and self.page_slug:
+            return True
+        else:
+            return False
+
     def check_link(self):
         from wagtaillinkchecker.tasks import check_link
         check_link.apply_async((self.pk, ))
 
     def save(self, *args, **kwargs):
         super(ScanLink, self).save(*args, **kwargs)
+
+
+@receiver(pre_delete, sender=Page)
+def delete_tag(instance, **kwargs):
+    scans = ScanLink.objects.filter(page=instance)
+    for scan in scans:
+        scan.page_deleted = True
+        scan.page_slug = instance.slug
+        scan.save()

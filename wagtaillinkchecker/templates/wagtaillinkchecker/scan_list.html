@@ -19,8 +19,8 @@
                             <li><a href="{% url 'wagtaillinkchecker_delete' scan_pk=scan.pk %}" class="button button-small no button-secondary yes">{% trans 'Delete Scan' %}</a></li>
                         </ul>
                     </td>
-                    <td class='amount'>{{scan.links.count}}</td>
-					<td class='amount'>{{scan.broken_link_count}} broken links out of {{scan.links.count}} links</td>
+                    <td class='amount'>{{scan.valid_links.count}}</td>
+					<td class='amount'>{{scan.broken_links.count}} broken links out of {{scan.links.count}} links</td>
                     <td
 						style='color:{% if scan.is_finished %}green{% else %}orange{% endif %};font-weight:bold;'
 						class='avaliablity'>
@@ -29,7 +29,7 @@
 					{% else %}
 					{{scan.links.count}} links found <br />
 					{{scan.crawled_links.count}} links crawled <br />
-					{{scan.broken_link_count}} broken links found <br />
+					{{scan.broken_links.count}} broken links found <br />
 					{% endif %}
 					</td>
                 </tr>

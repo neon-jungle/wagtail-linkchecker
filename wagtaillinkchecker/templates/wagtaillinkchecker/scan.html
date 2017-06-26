@@ -11,7 +11,7 @@
 		<h2>Links To Be Scanned</h2>
 		{% for link in scan.non_scanned_links.all %}
 		<p>
-			<a href='{{link}}' target="_blank">{{link}}</a> - {{link.crawled}}
+			<a href='{{link}}' target="_blank">{{link}}</a>{% if link.page_is_deleted %} - PAGE CONTAINING LINK WAS DELETED{% endif %}
 		</p>
 		{% endfor %}
 		{% endif %}
@@ -21,20 +21,21 @@
 		{% if scan.broken_links.exists %}
 		{% for link in scan.broken_links.all %}
 		<p>
-			<a href='{{link}}' target="_blank">{{link}}</a> - <a href="{% url 'wagtailadmin_pages:edit' link.page.id %}" target="_blank" class="button button-small">Edit page containing this link</a>
+			<a href='{{link}}' target="_blank">{{link}}</a>{% if link.page %} - <a href="{% url 'wagtailadmin_pages:edit' link.page.id %}" target="_blank" class="button button-small">Edit page containing this link</a>{% endif %}
 			{% if link.status_code %}<br /><b>Status Code: </b>{{link.status_code}}{% endif %}
 			{% if link.error_text %}<br /><b>Error: </b>{{link.error_text}}{% endif %}
+			{% if link.page_is_deleted %}<br /><b>Info: </b>PAGE CONTAINING THIS LINK WAS DELETED{% endif %}
 		</p>
 		{% endfor %}
 		{% else %}
-		<p>There are no broken links!</p>
+		<p>Congratulations, there are no broken links!</p>
 		{% endif %}
 
 		<h2>Working Links</h2>
 		{% if scan.working_links.exists %}
 		{% for link in scan.working_links.all %}
 		<p>
-			<a href='{{link}}' target="_blank">{{link}}</a>
+			<a href='{{link}}' target="_blank">{{link}}</a>{% if link.page_is_deleted %} - PAGE CONTAINING LINK WAS DELETED{% endif %}
 		</p>
 		{% endfor %}
 		{% else %}
