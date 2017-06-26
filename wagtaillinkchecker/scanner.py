@@ -6,6 +6,7 @@ except ImportError:
     import httplib as client
 
 import requests
+from django.utils.translation import ugettext_lazy as _
 
 
 def get_celery_worker_status():
@@ -43,12 +44,12 @@ class Link(Exception):
         elif self.status_code in range(100, 300):
             message = "Success"
         elif self.status_code in range(500, 600) and self.url.startswith(self.site.root_url):
-            message = str(self.status_code) + ': ' + 'Internal server error, please notify the site administrator.'
+            message = str(self.status_code) + ': ' + _('Internal server error, please notify the site administrator.')
         else:
             try:
                 message = str(self.status_code) + ': ' + client.responses[self.status_code] + '.'
             except KeyError:
-                message = str(self.status_code) + ': ' + 'Unknown error.'
+                message = str(self.status_code) + ': ' + _('Unknown error.')
         return message
 
     def __str__(self):
@@ -79,7 +80,7 @@ def get_url(url, page, site):
         return data
     except requests.exceptions.ConnectionError as e:
         data['error'] = True
-        data['error_message'] = 'There was an error connecting to this site.'
+        data['error_message'] = _('There was an error connecting to this site.')
         return data
     except requests.exceptions.RequestException as e:
         data['error'] = True
@@ -95,7 +96,7 @@ def get_url(url, page, site):
         return data
     else:
         data['error'] = True
-        data['error_message'] = 'There was an error connecting to this site.'
+        data['error_message'] = _('There was an error connecting to this site.')
         return data
 
 

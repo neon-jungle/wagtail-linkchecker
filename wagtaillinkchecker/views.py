@@ -6,6 +6,7 @@ from wagtail.wagtailadmin import messages
 from wagtail.wagtailadmin.edit_handlers import (ObjectList,
                                                 extract_panel_definitions_from_model_class)
 from wagtail.wagtailcore.models import Site
+from django.utils.translation import ugettext_lazy as _
 
 from wagtaillinkchecker.forms import SitePreferencesForm
 from wagtaillinkchecker.models import SitePreferences, Scan
@@ -51,7 +52,7 @@ def delete(request, scan_pk):
         for link in scan.all_links():
             link.delete()
         scan.delete()
-        messages.success(request, 'The scan results were successfully deleted.')
+        messages.success(request, _('The scan results were successfully deleted.'))
         return redirect('wagtaillinkchecker')
 
     return render(request, 'wagtaillinkchecker/delete.html', {
@@ -73,10 +74,10 @@ def settings(request):
         if form.is_valid():
             edit_handler = EditHandler(instance=SitePreferences, form=form)
             form.save()
-            messages.success(request, 'Link checker settings have been updated.')
+            messages.success(request, _('Link checker settings have been updated.'))
             return redirect('wagtaillinkchecker_settings')
         else:
-            messages.error(request, 'The form could not be saved due to validation errors')
+            messages.error(request, _('The form could not be saved due to validation errors'))
     else:
         form = SitePreferencesForm(instance=instance)
         edit_handler = EditHandler(instance=SitePreferences, form=form)
@@ -93,6 +94,6 @@ def run_scan(request):
     if 'ERROR' not in celery_status:
         broken_link_scan(site)
     else:
-        messages.warning(request, 'No celery workers are running, the scan was not conducted.')
+        messages.warning(request, _('No celery workers are running, the scan was not conducted.'))
 
     return redirect('wagtaillinkchecker')

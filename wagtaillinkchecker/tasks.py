@@ -2,6 +2,8 @@ from celery import shared_task
 from wagtaillinkchecker.scanner import get_url, clean_url
 from wagtaillinkchecker.models import ScanLink
 from bs4 import BeautifulSoup
+from django.utils.translation import ugettext_lazy as _
+
 from django.db.utils import IntegrityError
 from django.utils import timezone
 
@@ -19,7 +21,7 @@ def check_link(link_pk):
 
         elif url['invalid_schema']:
             link.invalid = True
-            link.error_text = 'Link was invalid'
+            link.error_text = _('Link was invalid')
 
         elif link.page.full_url == link.url:
             soup = BeautifulSoup(url['response'].content, 'html5lib')

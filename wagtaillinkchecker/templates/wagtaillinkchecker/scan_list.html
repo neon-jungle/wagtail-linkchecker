@@ -2,10 +2,10 @@
 <table class="listing full-width">
             <colgroup>
             <thead><tr class="table-headers">
-                <th class="title">Date</th>
-                <th class='amount'>Links Scanned</th>
-				<th class='amount'>Results</th>
-                <th class='avaliablity'>Completed</th>
+                <th class="title">{% blocktrans %}Date{% endblocktrans %}</th>
+                <th class='amount'>{% blocktrans %}Links Scanned{% endblocktrans %}</th>
+				<th class='amount'>{% blocktrans %}Results{% endblocktrans %}</th>
+                <th class='avaliablity'>{% blocktrans %}Completed{% endblocktrans %}</th>
             </tr></thead>
             <tbody>
             {% for scan in page %}
@@ -20,16 +20,16 @@
                         </ul>
                     </td>
                     <td class='amount'>{{scan.valid_links.count}}</td>
-					<td class='amount'>{{scan.broken_links.count}} broken links out of {{scan.links.count}} links</td>
+					<td class='amount'>{% blocktrans with broken_links=scan.broken_links.count links=scan.links.count %}{{broken_links}} broken links out of {{links}} links{% endblocktrans %}</td>
                     <td
 						style='color:{% if scan.is_finished %}green{% else %}orange{% endif %};font-weight:bold;'
 						class='avaliablity'>
 					{% if scan.is_finished %}
-					Completed
+					{% blocktrans %}Completed{% endblocktrans %}
 					{% else %}
-					{{scan.links.count}} links found <br />
-					{{scan.crawled_links.count}} links crawled <br />
-					{{scan.broken_links.count}} broken links found <br />
+					{% blocktrans with links=scan.links.count %}{{links}} links found{% endblocktrans %} <br />
+					{% blocktrans with crawled_links=scan.crawled_links.count %}{{crawled_links}} links crawled{% endblocktrans %}<br />
+					{% blocktrans with broken_links=scan.broken_links.count %}{{broken_links}} broken links found{% endblocktrans %} <br />
 					{% endif %}
 					</td>
                 </tr>

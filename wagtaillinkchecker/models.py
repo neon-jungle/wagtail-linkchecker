@@ -3,12 +3,15 @@ from wagtail.wagtailcore.models import Site
 from wagtail.wagtailcore.models import Page
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.utils.translation import ugettext_lazy as _
+
 
 class SitePreferences(models.Model):
     site = models.OneToOneField(Site, unique=True, db_index=True, editable=False)
     automated_scanning = models.BooleanField(
         default=False,
-        help_text='Conduct automated sitewide scans for broken links, and send emails if a problem is found.'
+        help_text=_('Conduct automated sitewide scans for broken links, and send emails if a problem is found.'),
+        verbose_name=_('Automated Scanning')
     )
 
 
@@ -50,10 +53,10 @@ class Scan(models.Model):
         return self.links.filter(crawled=False)
 
     def result(self):
-        return '{0} broken links found out of {1} links'.format(self.broken_link_count(), self.links.count())
+        return _('{0} broken links found out of {1} links'.format(self.broken_link_count(), self.links.count()))
 
     def __str__(self):
-        return 'Scan - {0}'.format(self.scan_started.strftime('%d/%m/%Y'))
+        return _('Scan - {0}'.format(self.scan_started.strftime('%d/%m/%Y')))
 
 
 class ScanLink(models.Model):

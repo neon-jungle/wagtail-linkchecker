@@ -3,6 +3,8 @@ from __future__ import unicode_literals
 from django.conf.urls import include, url
 from django.core import urlresolvers
 from wagtail.wagtailadmin.menu import MenuItem
+from django.utils.translation import ugettext_lazy as _
+
 from wagtail.wagtailcore import hooks
 
 from wagtaillinkchecker import urls
@@ -18,7 +20,7 @@ def register_admin_urls():
 @hooks.register('register_settings_menu_item')
 def register_menu_settings():
     return MenuItem(
-        'Link Checker',
+        _('Link Checker'),
         urlresolvers.reverse('wagtaillinkchecker'),
         classnames='icon icon-link',
         order=300
