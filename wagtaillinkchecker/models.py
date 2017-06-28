@@ -22,41 +22,37 @@ class Scan(models.Model):
 
     @property
     def is_finished(self):
-        if self.scan_finished:
-            return True
-        else:
-            return False
+        return self.scan_finished is not None
 
     def add_link(self, url=None, page=None):
         return ScanLink.objects.create(scan=self, url=url, page=page)
-
-    def all_links(self):
-        """All links for a scan."""
-        return ScanLink.objects.filter(scan=self)
-
-    def valid_links(self):
-        return self.all_links().filter(invalid=False)
-
-    def broken_links(self):
-        return self.valid_links().filter(broken=True)
-
-    def crawled_links(self):
-        return self.valid_links().filter(crawled=True)
-
-    def invalid_links(self):
-        return self.valid_links().filter(invalid=True)
-
-    def working_links(self):
-        return self.valid_links().filter(broken=False, crawled=True)
-
-    def non_scanned_links(self):
-        return self.links.filter(crawled=False)
 
     def result(self):
         return _('{0} broken links found out of {1} links'.format(self.broken_link_count(), self.links.count()))
 
     def __str__(self):
-        return _('Scan - {0}'.format(self.scan_started.strftime('%d/%m/%Y')))
+        return 'Scan - {0}'.format(self.scan_started.strftime('%d/%m/%Y'))
+
+
+class ScanLinkQuerySet(models.QuerySet):
+
+    def valid(self):
+        return self.filter(invalid=False)
+
+    def non_scanned_links(self):
+        return self.filter(crawled=False)
+
+    def broken_links(self):
+        return self.valid().filter(broken=True)
+
+    def crawled_links(self):
+        return self.valid().filter(crawled=True)
+
+    def invalid_links(self):
+        return self.valid().filter(invalid=True)
+
+    def working_links(self):
+        return self.valid().filter(broken=False, crawled=True)
 
 
 class ScanLink(models.Model):
@@ -84,6 +80,8 @@ class ScanLink(models.Model):
 
     page_slug = models.CharField(max_length=128, null=True, blank=True)
 
+    objects = ScanLinkQuerySet.as_manager()
+
     class Meta:
         unique_together = [('url', 'scan')]
 
@@ -92,23 +90,13 @@ class ScanLink(models.Model):
 
     @property
     def page_is_deleted(self):
-        if self.page_deleted and self.page_slug:
-            return True
-        else:
-            return False
+        return self.page_deleted and self.page_slug
 
     def check_link(self):
         from wagtaillinkchecker.tasks import check_link
         check_link.apply_async((self.pk, ))
 
-    def save(self, *args, **kwargs):
-        super(ScanLink, self).save(*args, **kwargs)
-
 
 @receiver(pre_delete, sender=Page)
 def delete_tag(instance, **kwargs):
-    scans = ScanLink.objects.filter(page=instance)
-    for scan in scans:
-        scan.page_deleted = True
-        scan.page_slug = instance.slug
-        scan.save()
+    ScanLink.objects.filter(page=instance).update(page_deleted=True, page_slug=instance.slug)

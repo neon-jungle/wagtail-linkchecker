@@ -1,5 +1,3 @@
-
-
 try:
     from http import client as client
 except ImportError:
@@ -7,6 +5,7 @@ except ImportError:
 
 import requests
 from django.utils.translation import ugettext_lazy as _
+from wagtaillinkchecker import HTTP_STATUS_CODES
 
 
 def get_celery_worker_status():
@@ -72,6 +71,7 @@ def get_url(url, page, site):
         'error': False,
         'invalid_schema': False
     }
+    response = None
     try:
         response = requests.get(url, verify=True)
         data['response'] = response
@@ -80,7 +80,7 @@ def get_url(url, page, site):
         return data
     except requests.exceptions.ConnectionError as e:
         data['error'] = True
-        data['error_message'] = _('There was an error connecting to this site.')
+        data['error_message'] = _('There was an error connecting to this site')
         return data
     except requests.exceptions.RequestException as e:
         data['error'] = True
@@ -88,15 +88,20 @@ def get_url(url, page, site):
         data['error_message'] = type(e).__name__ + ': ' + str(e)
         return data
 
-    if 'response' in locals():
-        if response.status_code not in range(100, 300):
+    else:
+        if response.status_code not in range(100, 400):
+            error_message_for_status_code = HTTP_STATUS_CODES.get(response.status_code)
             data['error'] = True
             data['status_code'] = response.status_code
-            data['error_message'] = client.responses[response.status_code]
-        return data
-    else:
-        data['error'] = True
-        data['error_message'] = _('There was an error connecting to this site.')
+            if error_message_for_status_code:
+                data['error_message'] = error_message_for_status_code[0]
+            else:
+                if response.status_code in range(400, 500):
+                    data['error_message'] = 'Client error'
+                elif response.status_code in range(500, 600):
+                    data['error_message'] = 'Server Error'
+                else:
+                    data['error_message'] = "Error: Unknown HTTP Status Code '{0}'".format(response.status_code)
         return data
 
 
@@ -115,5 +120,9 @@ def broken_link_scan(site):
     scan = Scan.objects.create(site=site)
 
     for page in pages:
-        link = ScanLink.objects.create(url=page.full_url, page=page, scan=scan)
-        link.check_link()
+        try:
+            ScanLink.objects.get(url=page.full_url, scan=scan)
+            return
+        except ScanLink.DoesNotExist:
+            link = ScanLink.objects.create(url=page.full_url, page=page, scan=scan)
+            link.check_link()
