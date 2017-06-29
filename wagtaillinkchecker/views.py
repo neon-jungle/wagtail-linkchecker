@@ -64,7 +64,7 @@ def settings(request):
     site = Site.find_for_request(request)
     instance = SitePreferences.objects.filter(site=site).first()
     form = SitePreferencesForm(instance=instance)
-    form.instance.site = Site.find_for_request(request)
+    form.instance.site = site
     EditHandler = get_edit_handler(SitePreferences)
 
     if request.method == "POST":
