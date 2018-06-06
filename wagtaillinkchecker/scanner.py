@@ -97,8 +97,6 @@ def clean_url(url, site):
 
 def broken_link_scan(site):
     from wagtaillinkchecker.models import Scan, ScanLink
-    from wagtail.core.models import Page
-    # pages = Page.objects.filter(id=200)     # DEBUG
     pages = site.root_page.get_descendants(inclusive=True).live().public()
     scan = Scan.objects.create(site=site)
 
