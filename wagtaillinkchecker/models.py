@@ -1,8 +1,9 @@
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
-
+from django_rq import get_queue
 from wagtail import __version__ as WAGTAIL_VERSION
 
 if WAGTAIL_VERSION >= '2.0':
@@ -14,10 +15,12 @@ else:
 
 
 class SitePreferences(models.Model):
-    site = models.OneToOneField(Site, unique=True, db_index=True, editable=False, on_delete=models.CASCADE)
+    site = models.OneToOneField(
+        Site, unique=True, db_index=True, editable=False, on_delete=models.CASCADE)
     automated_scanning = models.BooleanField(
         default=False,
-        help_text=_('Conduct automated sitewide scans for broken links, and send emails if a problem is found.'),
+        help_text=_(
+            'Conduct automated sitewide scans for broken links, and send emails if a problem is found.'),
         verbose_name=_('Automated Scanning')
     )
 
@@ -25,7 +28,8 @@ class SitePreferences(models.Model):
 class Scan(models.Model):
     scan_finished = models.DateTimeField(blank=True, null=True)
     scan_started = models.DateTimeField(auto_now_add=True)
-    site = models.ForeignKey(Site, db_index=True, editable=False, on_delete=models.CASCADE)
+    site = models.ForeignKey(
+        Site, db_index=True, editable=False, on_delete=models.CASCADE)
 
     @property
     def is_finished(self):
@@ -63,7 +67,8 @@ class ScanLinkQuerySet(models.QuerySet):
 
 
 class ScanLink(models.Model):
-    scan = models.ForeignKey(Scan, related_name='links', on_delete=models.CASCADE)
+    scan = models.ForeignKey(Scan, related_name='links',
+                             on_delete=models.CASCADE)
     url = models.URLField()
 
     # If the link has been crawled
@@ -101,12 +106,11 @@ class ScanLink(models.Model):
 
     def check_link(self):
         from wagtaillinkchecker.tasks import check_link
-        from django_rq import get_queue
-        from django.conf import settings
         queue = get_queue(settings.RQ_DEFAULT_QUEUE, async=True)
         queue.enqueue(check_link, self.pk)
 
 
 @receiver(pre_delete, sender=Page)
 def delete_tag(instance, **kwargs):
-    ScanLink.objects.filter(page=instance).update(page_deleted=True, page_slug=instance.slug)
+    ScanLink.objects.filter(page=instance).update(
+        page_deleted=True, page_slug=instance.slug)
