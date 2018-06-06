@@ -3,7 +3,6 @@ from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
-from django_rq import get_queue
 from wagtail import __version__ as WAGTAIL_VERSION
 
 if WAGTAIL_VERSION >= '2.0':
@@ -106,8 +105,7 @@ class ScanLink(models.Model):
 
     def check_link(self):
         from wagtaillinkchecker.tasks import check_link
-        queue = get_queue(settings.RQ_DEFAULT_QUEUE, async=True)
-        queue.enqueue(check_link, self.pk)
+        check_link(self.pk)
 
 
 @receiver(pre_delete, sender=Page)

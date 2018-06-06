@@ -38,13 +38,15 @@ def scan(request, scan_pk):
 
 
 def index(request):
+    from django.conf import settings
+    
     site = Site.find_for_request(request)
     scans = Scan.objects.filter(site=site).order_by('-scan_started')
 
     paginator, page = paginate(
         request,
         scans,
-        per_page=8)
+        per_page=settings.DEFAULT_PER_PAGE)
 
     return render(request, 'wagtaillinkchecker/index.html', {
         'page': page,
