@@ -9,7 +9,7 @@ from wagtail import __version__ as WAGTAIL_VERSION
 from wagtaillinkchecker.forms import SitePreferencesForm
 from wagtaillinkchecker.models import SitePreferences, Scan
 from wagtaillinkchecker.pagination import paginate
-from wagtaillinkchecker.scanner import broken_link_scan, get_celery_worker_status
+from wagtaillinkchecker.scanner import broken_link_scan
 
 if WAGTAIL_VERSION >= '2.0':
     from wagtail.admin import messages
@@ -58,8 +58,7 @@ def delete(request, scan_pk):
 
     if request.method == 'POST':
         scan.delete()
-        messages.success(request, _(
-            'The scan results were successfully deleted.'))
+        messages.success(request, _('The scan results were successfully deleted.'))
         return redirect('wagtaillinkchecker')
 
     return render(request, 'wagtaillinkchecker/delete.html', {
@@ -79,16 +78,13 @@ def settings(request):
         form = SitePreferencesForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
-            messages.success(request, _(
-                'Link checker settings have been updated.'))
+            messages.success(request, _('Link checker settings have been updated.'))
             return redirect('wagtaillinkchecker_settings')
         else:
-            messages.error(request, _(
-                'The form could not be saved due to validation errors'))
+            messages.error(request, _('The form could not be saved due to validation errors'))
     else:
         form = SitePreferencesForm(instance=instance)
-        edit_handler = object_list.bind_to_instance(
-            instance=SitePreferences, form=form, request=request)
+        edit_handler = object_list.bind_to_instance(instance=SitePreferences, form=form, request=request)
 
     return render(request, 'wagtaillinkchecker/settings.html', {
         'form': form,
@@ -98,11 +94,5 @@ def settings(request):
 
 def run_scan(request):
     site = Site.find_for_request(request)
-    celery_status = get_celery_worker_status()
-    if 'ERROR' not in celery_status:
-        broken_link_scan(site)
-    else:
-        messages.warning(request, _(
-            'No celery workers are running, the scan was not conducted.'))
-
+    broken_link_scan(site)
     return redirect('wagtaillinkchecker')

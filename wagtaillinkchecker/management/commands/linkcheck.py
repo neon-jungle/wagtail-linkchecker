@@ -3,14 +3,15 @@ from django.core import mail
 from django.core.mail import EmailMessage
 from django.core.management.base import BaseCommand
 from django.template.loader import render_to_string
-from wagtaillinkchecker.scanner import broken_link_scan
-
 from wagtail import __version__ as WAGTAIL_VERSION
+
+from wagtaillinkchecker.scanner import broken_link_scan
 
 if WAGTAIL_VERSION >= '2.0':
     from wagtail.core.models import PageRevision, Site
 else:
     from wagtail.wagtailcore.models import PageRevision, Site
+
 
 class Command(BaseCommand):
 

@@ -8,25 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 from wagtaillinkchecker import HTTP_STATUS_CODES
 
 
-def get_celery_worker_status():
-    ERROR_KEY = "ERROR"
-    try:
-        from celery.task.control import inspect
-        insp = inspect()
-        d = insp.stats()
-        if not d:
-            d = {ERROR_KEY: 'No running Celery workers were found.'}
-    except IOError as e:
-        from errno import errorcode
-        msg = "Error connecting to the backend: " + str(e)
-        if len(e.args) > 0 and errorcode.get(e.args[0]) == 'ECONNREFUSED':
-            msg += ' Check that the RabbitMQ server is running.'
-        d = {ERROR_KEY: msg}
-    except ImportError as e:
-        d = {ERROR_KEY: str(e)}
-    return d
-
-
 class Link(Exception):
 
     def __init__(self, url, page, status_code=None, error=None, site=None):
@@ -116,6 +97,8 @@ def clean_url(url, site):
 
 def broken_link_scan(site):
     from wagtaillinkchecker.models import Scan, ScanLink
+    from wagtail.core.models import Page
+    # pages = Page.objects.filter(id=200)     # DEBUG
     pages = site.root_page.get_descendants(inclusive=True).live().public()
     scan = Scan.objects.create(site=site)
 

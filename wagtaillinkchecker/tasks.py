@@ -1,4 +1,3 @@
-from celery import shared_task
 from wagtaillinkchecker.scanner import get_url, clean_url
 from wagtaillinkchecker.models import ScanLink
 from bs4 import BeautifulSoup
@@ -8,7 +7,6 @@ from django.db.utils import IntegrityError
 from django.utils import timezone
 
 
-@shared_task
 def check_link(link_pk):
     link = ScanLink.objects.get(pk=link_pk)
     site = link.scan.site
