@@ -1,3 +1,5 @@
+import django_rq
+
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import pre_delete
@@ -105,8 +107,10 @@ class ScanLink(models.Model):
 
     def check_link(self):
         from wagtaillinkchecker.tasks import check_link
-        check_link(self.pk)
-
+        queue_name = getattr(settings, 'RQ_DEFAULT_QUEUE', 'default')
+        queue = django_rq.get_queue(
+            queue_name, autocommit=True, async=True, default_timeout=360)
+        queue.enqueue(check_link, self.pk)
 
 @receiver(pre_delete, sender=Page)
 def delete_tag(instance, **kwargs):

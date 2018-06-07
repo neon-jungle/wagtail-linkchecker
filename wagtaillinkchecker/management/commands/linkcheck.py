@@ -22,38 +22,4 @@ class Command(BaseCommand):
         print(f'Scanning {len(pages)} pages...')
         scan = broken_link_scan(site)
         broken_links = ScanLink.objects.filter(scan=scan, crawled=True)
-        print(f'Found {len(broken_links)} broken links.')
-
-        messages = []
-        for page in pages:
-            revisions = PageRevision.objects.filter(page=page)
-            user = None
-            user_email = settings.DEFAULT_FROM_EMAIL
-            if revisions:
-                revision = revisions.latest('created_at')
-                user = revision.user
-                user_email = revision.user.email if revision.user else ''
-            page_broken_links = []
-            for link in broken_links:
-                if link.page == page:
-                    page_broken_links.append(link)
-            email_message = render_to_string(
-                'wagtaillinkchecker/emails/broken_links.html', {
-                    'page_broken_links': page_broken_links,
-                    'user': user,
-                    'page': page,
-                    'base_url': site.root_url,
-                    'site_name': settings.WAGTAIL_SITE_NAME,
-                })
-            email = EmailMessage(
-                'Broken links on page "%s"' % (page.title),
-                email_message,
-                settings.DEFAULT_FROM_EMAIL,
-                [user_email])
-            email.content_subtype = 'html'
-            messages.append(email)
-
-        connection = mail.get_connection()
-        connection.open()
-        connection.send_messages(messages)
-        connection.close()
+        print('Links enqueued on Redis')
