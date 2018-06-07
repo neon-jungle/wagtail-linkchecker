@@ -5,6 +5,8 @@ __all__ = ['app']
 
 __version__ = '0.1.0'
 
+default_app_config = 'wagtaillinkchecker.apps.WagtailLinkchekerAppConfig'
+
 HTTP_STATUS_CODES = {
     100: ('Continue', 'Request received, please continue'),
     101: ('Switching Protocols',
