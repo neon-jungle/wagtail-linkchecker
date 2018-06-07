@@ -44,7 +44,7 @@ def index(request):
     paginator, page = paginate(
         request,
         scans,
-        per_page=8)
+        per_page=settings.DEFAULT_PER_PAGE)
 
     return render(request, 'wagtaillinkchecker/index.html', {
         'page': page,

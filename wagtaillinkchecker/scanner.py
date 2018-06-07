@@ -126,3 +126,5 @@ def broken_link_scan(site):
         except ScanLink.DoesNotExist:
             link = ScanLink.objects.create(url=page.full_url, page=page, scan=scan)
             link.check_link()
+
+    return scan
