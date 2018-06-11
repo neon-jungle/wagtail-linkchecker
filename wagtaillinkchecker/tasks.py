@@ -53,5 +53,6 @@ def check_link(link_pk):
         scan = link.scan
         scan.scan_finished = timezone.now()
         scan.save()
+        scan.reporting()
 
     return True

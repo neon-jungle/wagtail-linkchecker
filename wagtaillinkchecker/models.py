@@ -1,9 +1,11 @@
 import django_rq
 
+from django.core import mail
 from django.conf import settings
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from wagtail import __version__ as WAGTAIL_VERSION
 
@@ -44,6 +46,36 @@ class Scan(models.Model):
 
     def __str__(self):
         return 'Scan - {0}'.format(self.scan_started.strftime('%d/%m/%Y'))
+
+    def reporting(self):
+        email_message = ''
+        pages = self.site.root_page.get_descendants(
+            inclusive=True).live().public()
+        broken_links = self.links.broken_links()
+        for page in pages:
+            page_broken_links = []
+            for link in broken_links:
+                if link.page == page:
+                    page_broken_links.append(link)
+
+            if page_broken_links:
+                email_message += render_to_string(
+                    'wagtaillinkchecker/emails/broken_links.html', {
+                        'page_broken_links': page_broken_links,
+                        'user': '',
+                        'page': page,
+                        'base_url': self.site.root_url,
+                        'site_name': settings.WAGTAIL_SITE_NAME,
+                    })
+
+        with mail.get_connection() as connection:
+            email = mail.EmailMessage(
+                'Broken links for {}'.format(self),
+                email_message,
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.DEFAULT_FROM_EMAIL])
+            email.content_subtype = 'html'
+            email.send()
 
 
 class ScanLinkQuerySet(models.QuerySet):

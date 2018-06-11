@@ -20,6 +20,5 @@ class Command(BaseCommand):
         site = Site.objects.filter(is_default_site=True).first()
         pages = site.root_page.get_descendants(inclusive=True).live().public()
         print(f'Scanning {len(pages)} pages...')
-        scan = broken_link_scan(site)
-        broken_links = ScanLink.objects.filter(scan=scan, crawled=True)
+        broken_link_scan(site)
         print('Links enqueued on Redis')
