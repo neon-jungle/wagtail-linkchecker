@@ -123,7 +123,7 @@ class ScanLink(models.Model):
     # Page this link was on was deleted
     page_deleted = models.BooleanField(default=False)
 
-    page_slug = models.CharField(max_length=128, null=True, blank=True)
+    page_slug = models.CharField(max_length=512, null=True, blank=True)
 
     objects = ScanLinkQuerySet.as_manager()
 
