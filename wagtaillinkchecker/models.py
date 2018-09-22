@@ -68,7 +68,7 @@ class ScanLinkQuerySet(models.QuerySet):
 class ScanLink(models.Model):
     scan = models.ForeignKey(Scan, related_name='links',
                              on_delete=models.CASCADE)
-    url = models.URLField()
+    url = models.URLField(max_length=500)
 
     # If the link has been crawled
     crawled = models.BooleanField(default=False)
