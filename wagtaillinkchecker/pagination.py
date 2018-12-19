@@ -2,9 +2,8 @@ from django.conf import settings
 from django.core.paginator import Paginator, EmptyPage
 
 
-def paginate(request, items, per_page=settings.DEFAULT_PER_PAGE,
-             page_key='page'):
-    paginator = Paginator(items, per_page)
+def paginate(request, items, page_key='page'):
+    paginator = Paginator(items, 50)
 
     try:
         page_number = int(request.GET[page_key])

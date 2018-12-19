@@ -17,7 +17,7 @@ It works with Wagtail 1.0 and upwards.
 Using
 =====
 
-To use, firstly you will need to add ``wagtaillinkchecker`` to your ``INSTALLED_APPS``, add ``DEFAULT_PER_PAGE = 50`` to your setting file and run the migrations.
+To use, firstly you will need to add ``wagtaillinkchecker`` to your ``INSTALLED_APPS`` and run the migrations.
 There will now be an extra item on the settings panel of the wagtailadmin. Inside here you can enable or disable automated
 scanning (See below for more detail) or conduct a scan.
 
