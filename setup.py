@@ -10,11 +10,11 @@ from setuptools import find_packages, setup
 
 setup(
     name='wagtail-linkchecker',
-    version='0.3.2',
+    version='0.4.0',
     description="A tool to assist with finding broken links on your wagtail site.",
     long_description=readme,
-    author='Liam Brenner',
-    author_email='liam@takeflight.com.au',
+    author='Takeflight',
+    author_email='developers@takeflight.com.au',
     url='https://github.com/takeflight/wagtail-linkchecker',
 
     install_requires=[
