@@ -1,6 +1,6 @@
-===============
+===================
 wagtail-linkchecker
-===============
+===================
 
 A tool/plugin to assist with finding broken links on your wagtail site.
 This tool works asynchronously using celery.
