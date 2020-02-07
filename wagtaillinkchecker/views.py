@@ -2,7 +2,12 @@ from __future__ import print_function
 
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect, render
-from django.utils.lru_cache import lru_cache
+
+try:
+    from django.utils.lru_cache import lru_cache
+except ModuleNotFoundError:
+    from functools import lru_cache
+
 from django.utils.translation import ugettext_lazy as _
 from wagtail import __version__ as WAGTAIL_VERSION
 
