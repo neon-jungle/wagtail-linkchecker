@@ -20,7 +20,7 @@ setup(
     install_requires=[
         'wagtail>=1.0',
         'requests>=2.9.1',
-        'celery>=4.0,<4.1'
+        'celery>=4.0,<5'
     ],
     zip_safe=False,
     license='BSD License',
