@@ -3,9 +3,9 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 
-from wagtail import __version__ as WAGTAIL_VERSION
+from wagtaillinkchecker import utils
 
-if WAGTAIL_VERSION >= '2.0':
+if utils.is_wagtail_version_more_than_equal_to_2_0():
     from wagtail.core.models import Site
     from wagtail.core.models import Page
 else:
