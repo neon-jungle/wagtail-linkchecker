@@ -4,12 +4,11 @@ from django.core.mail import EmailMessage
 from django.core.management.base import BaseCommand
 from django.template.loader import render_to_string
 
-from wagtail import __version__ as WAGTAIL_VERSION
-
 from wagtaillinkchecker.scanner import broken_link_scan
 from wagtaillinkchecker.models import ScanLink
+from wagtaillinkchecker import utils
 
-if WAGTAIL_VERSION >= '2.0':
+if utils.is_wagtail_version_more_than_equal_to_2_0():
     from wagtail.core.models import PageRevision, Site
 else:
     from wagtail.wagtailcore.models import PageRevision, Site

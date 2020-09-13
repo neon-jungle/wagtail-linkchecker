@@ -3,16 +3,16 @@ from __future__ import unicode_literals
 from django import __version__ as DJANGO_VERSION
 from django.conf.urls import include, url
 from django.utils.translation import ugettext_lazy as _
-from wagtail import __version__ as WAGTAIL_VERSION
 
 from wagtaillinkchecker import urls
+from wagtaillinkchecker import utils
 
-if DJANGO_VERSION >= '2.0':
+if utils.is_wagtail_version_more_than_equal_to_2_0():
     from django import urls as urlresolvers
 else:
     from django.core import urlresolvers
 
-if WAGTAIL_VERSION >= '2.0':
+if utils.is_wagtail_version_more_than_equal_to_2_0():
     from wagtail.admin.menu import MenuItem
     from wagtail.core import hooks
 else:

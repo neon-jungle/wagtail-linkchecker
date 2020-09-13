@@ -9,14 +9,14 @@ except ModuleNotFoundError:
     from functools import lru_cache
 
 from django.utils.translation import ugettext_lazy as _
-from wagtail import __version__ as WAGTAIL_VERSION
 
 from wagtaillinkchecker.forms import SitePreferencesForm
 from wagtaillinkchecker.models import SitePreferences, Scan
 from wagtaillinkchecker.pagination import paginate
 from wagtaillinkchecker.scanner import broken_link_scan, get_celery_worker_status
+from wagtaillinkchecker import utils
 
-if WAGTAIL_VERSION >= '2.0':
+if utils.is_wagtail_version_more_than_equal_to_2_0():
     from wagtail.admin import messages
     from wagtail.admin.edit_handlers import (ObjectList,
                                              extract_panel_definitions_from_model_class)
@@ -32,7 +32,7 @@ else:
 def get_edit_handler(model):
     panels = extract_panel_definitions_from_model_class(model, ['site'])
 
-    if WAGTAIL_VERSION >= '2.5':
+    if utils.is_wagtail_version_more_than_equal_to_2_5():
         return ObjectList(panels).bind_to(model=model)
     else:
         return ObjectList(panels).bind_to_model(model)
@@ -95,7 +95,7 @@ def settings(request):
                 'The form could not be saved due to validation errors'))
     else:
         form = SitePreferencesForm(instance=instance)
-        if WAGTAIL_VERSION >= '2.5':
+        if utils.is_wagtail_version_more_than_equal_to_2_5():
             edit_handler = object_list.bind_to(
                 instance=SitePreferences, form=form, request=request)
         else:
