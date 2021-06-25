@@ -114,7 +114,7 @@ def clean_url(url, site):
     return url
 
 
-def broken_link_scan(site):
+def broken_link_scan(site, run_sync=False, ):
     from wagtaillinkchecker.models import Scan, ScanLink
     pages = site.root_page.get_descendants(inclusive=True).live().public()
     scan = Scan.objects.create(site=site)
@@ -125,6 +125,6 @@ def broken_link_scan(site):
             return
         except ScanLink.DoesNotExist:
             link = ScanLink.objects.create(url=page.full_url, page=page, scan=scan)
-            link.check_link()
+            link.check_link(run_sync)
 
     return scan
