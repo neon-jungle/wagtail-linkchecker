@@ -31,9 +31,10 @@ class Command(BaseCommand):
         site = Site.objects.filter(is_default_site=True).first()
         pages = site.root_page.get_descendants(inclusive=True).live().public()
         run_sync = kwargs.get('run_synchronously') or False
+        verbosity = kwargs.get('verbosity') or 1
 
         print(f'Scanning {len(pages)} pages...')
-        scan = broken_link_scan(site, run_sync)
+        scan = broken_link_scan(site, run_sync, verbosity)
         broken_links = ScanLink.objects.filter(scan=scan, crawled=True)
         print(f'Found {len(broken_links)} broken links.')
 

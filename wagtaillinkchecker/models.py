@@ -106,7 +106,7 @@ class ScanLink(models.Model):
     def check_link(self, run_sync=False):
         from wagtaillinkchecker.tasks import check_link
         if run_sync:
-            check_link((self.pk, ))
+            check_link(self.pk)
         else:
             check_link.apply_async((self.pk, ))
 
