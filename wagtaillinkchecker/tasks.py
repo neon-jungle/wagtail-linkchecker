@@ -9,7 +9,7 @@ from django.utils import timezone
 
 
 @shared_task
-def check_link(link_pk):
+def check_link(link_pk, verbosity=1):
     link = ScanLink.objects.get(pk=link_pk)
     site = link.scan.site
     url = get_url(link.url, link.page, site)
