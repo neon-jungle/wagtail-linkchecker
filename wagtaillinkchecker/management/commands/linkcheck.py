@@ -15,6 +15,12 @@ else:
 
 
 class Command(BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--do-not-send-mail',
+            action='store_true',
+            help='Do not send mails when finding broken links',
+        )
 
     def handle(self, *args, **kwargs):
         site = Site.objects.filter(is_default_site=True).first()
@@ -23,6 +29,10 @@ class Command(BaseCommand):
         scan = broken_link_scan(site)
         broken_links = ScanLink.objects.filter(scan=scan, crawled=True)
         print(f'Found {len(broken_links)} broken links.')
+
+        if kwargs['do-not-send-mail']:
+            print(f'Will not send any emails')
+            return
 
         messages = []
         for page in pages:
