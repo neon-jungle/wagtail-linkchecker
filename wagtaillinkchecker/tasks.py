@@ -31,7 +31,7 @@ def check_link(link_pk, run_sync=False, verbosity=1, ):
         for anchor in anchors:
             link_href = anchor.get('href')
             link_href = clean_url(link_href, site)
-            if verbosity > 2:
+            if verbosity > 1:
                 print(f"cleaned link_href: {link_href}")
             if link_href:
                 try:
@@ -43,7 +43,7 @@ def check_link(link_pk, run_sync=False, verbosity=1, ):
         for image in images:
             image_src = image.get('src')
             image_src = clean_url(image_src, site)
-            if verbosity > 2:
+            if verbosity > 1:
                 print(f"cleaned image_src: {image_src}")
             if image_src:
                 try:
