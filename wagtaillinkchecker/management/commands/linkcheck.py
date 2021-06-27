@@ -15,14 +15,32 @@ else:
 
 
 class Command(BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--do-not-send-mail',
+            action='store_true',
+            help='Do not send mails when finding broken links',
+        )
+        parser.add_argument(
+            '--run-synchronously',
+            action='store_true',
+            help='Run checks synchronously (avoid the need for Celery)',
+        )
 
     def handle(self, *args, **kwargs):
         site = Site.objects.filter(is_default_site=True).first()
         pages = site.root_page.get_descendants(inclusive=True).live().public()
+        run_sync = kwargs.get('run_synchronously') or False
+        verbosity = kwargs.get('verbosity') or 1
+
         print(f'Scanning {len(pages)} pages...')
-        scan = broken_link_scan(site)
+        scan = broken_link_scan(site, run_sync, verbosity)
         broken_links = ScanLink.objects.filter(scan=scan, crawled=True)
         print(f'Found {len(broken_links)} broken links.')
+
+        if kwargs.get('do_not_send_mail'):
+            print(f'Will not send any emails')
+            return
 
         messages = []
         for page in pages:

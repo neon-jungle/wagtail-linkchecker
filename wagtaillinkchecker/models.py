@@ -1,3 +1,4 @@
+from sys import version
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -103,9 +104,13 @@ class ScanLink(models.Model):
     def page_is_deleted(self):
         return self.page_deleted and self.page_slug
 
-    def check_link(self):
+    def check_link(self, run_sync=False, verbosity=1):
         from wagtaillinkchecker.tasks import check_link
-        check_link.apply_async((self.pk, ))
+
+        if run_sync:
+            check_link(self.pk, run_sync=run_sync, verbosity=verbosity)
+        else:
+            check_link.apply_async((self.pk, run_sync, verbosity))
 
 
 @receiver(pre_delete, sender=Page)
