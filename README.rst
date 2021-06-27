@@ -21,7 +21,7 @@ To use, firstly you will need to add ``wagtaillinkchecker`` to your ``INSTALLED_
 There will now be an extra item on the settings panel of the wagtailadmin. Inside here you can enable or disable automated
 scanning (See below for more detail) or conduct a scan.
 
-For scans to be conducted, you must be running a celery daemon.
+For scans to be conducted from the admin, you must be running a celery daemon.
 You can run the celery worker with ``celery -A wagtaillinkchecker worker -l info``. See the `Celery Documentation <http://docs.celeryproject.org/en/latest/index.html>`_ for more information.
 For production you'll want to run celery as a daemon using something like systemd. See `Celery Daemonization <http://docs.celeryproject.org/en/latest/userguide/daemonizing.html#daemonizing>`_ for more information.
 
@@ -39,3 +39,15 @@ Automated Scanning
 If you want automated scanning to work you **HAVE** to set up a cron job. The cron job will need to run the management command ``linkchecker`` at
 an interval of your choosing.
 The automated scans will do the same as manually conducting a scan, but instead will email the last person to edit the page with broken links/images.
+
+Command options
+---------------
+
+``--do-not-send-mail`` 
+    Don't send an email to administrators once scan is complete.
+
+``--run-synchronously``
+    Skip celery and run command synchronously (useful for automated scanning)
+
+``-v 2``
+    Show more output in the logs
