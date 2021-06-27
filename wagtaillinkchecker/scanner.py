@@ -43,10 +43,12 @@ class Link(Exception):
         elif self.status_code in range(100, 300):
             message = "Success"
         elif self.status_code in range(500, 600) and self.url.startswith(self.site.root_url):
-            message = str(self.status_code) + ': ' + _('Internal server error, please notify the site administrator.')
+            message = str(self.status_code) + ': ' + \
+                _('Internal server error, please notify the site administrator.')
         else:
             try:
-                message = str(self.status_code) + ': ' + client.responses[self.status_code] + '.'
+                message = str(self.status_code) + ': ' + \
+                    client.responses[self.status_code] + '.'
             except KeyError:
                 message = str(self.status_code) + ': ' + _('Unknown error.')
         return message
@@ -90,7 +92,8 @@ def get_url(url, page, site):
 
     else:
         if response.status_code not in range(100, 400):
-            error_message_for_status_code = HTTP_STATUS_CODES.get(response.status_code)
+            error_message_for_status_code = HTTP_STATUS_CODES.get(
+                response.status_code)
             data['error'] = True
             data['status_code'] = response.status_code
             if error_message_for_status_code:
@@ -101,7 +104,8 @@ def get_url(url, page, site):
                 elif response.status_code in range(500, 600):
                     data['error_message'] = 'Server Error'
                 else:
-                    data['error_message'] = "Error: Unknown HTTP Status Code '{0}'".format(response.status_code)
+                    data['error_message'] = "Error: Unknown HTTP Status Code '{0}'".format(
+                        response.status_code)
         return data
 
 
@@ -125,9 +129,9 @@ def broken_link_scan(site, run_sync=False, verbosity=1):
             if verbosity > 1:
                 print(f"Checking {url}")
             ScanLink.objects.get(url=url, scan=scan)
-            return
         except ScanLink.DoesNotExist:
-            link = ScanLink.objects.create(url=page.full_url, page=page, scan=scan)
+            link = ScanLink.objects.create(
+                url=page.full_url, page=page, scan=scan)
             link.check_link(run_sync, verbosity=verbosity)
 
     return scan
