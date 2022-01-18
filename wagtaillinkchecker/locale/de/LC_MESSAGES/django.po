@@ -1,0 +1,220 @@
+# German translation for wagtail-linkchecker.
+# This file is distributed under the same license as the wagtail-linkchecker package.
+# Peter Jochum <peter.jochum@gmail.com>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: wagtail-linkchecker 0.6.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-18 14:17+0100\n"
+"PO-Revision-Date: 2022-01-18 14:17+0100\n"
+"Last-Translator: Peter Jochum <peter.jochum@gmail.com>\n"
+"Language-Team: German <peter.jochum@gmail.com>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: Gtranslator 40.0\n"
+
+#: models.py:23
+msgid ""
+"Conduct automated sitewide scans for broken links, and send emails if a "
+"problem is found."
+msgstr ""
+"Führt automatische Überprüfungen nach fehlerhaften Links auf der ganzen "
+"Seite durch. Bei gefundenen Problemen werden Nutzer per Email verständigt."
+
+#: models.py:24
+msgid "Automated Scanning"
+msgstr "Automatische Überprüfung"
+
+#: models.py:42
+#, python-brace-format
+msgid "{0} broken links found out of {1} links"
+msgstr "{0} Links von {1} funktionieren nicht"
+
+#: scanner.py:47
+msgid "Internal server error, please notify the site administrator."
+msgstr ""
+"Interner Serverfehler, bitte verständigen sie den Administrator der Seite."
+
+#: scanner.py:53
+msgid "Unknown error."
+msgstr "Unbekannter Fehler."
+
+#: scanner.py:85
+msgid "There was an error connecting to this site"
+msgstr "Es konnte keine Verbindung mit der Seite hergestellt werden"
+
+#: tasks.py:24
+msgid "Link was invalid"
+msgstr "Link war ungültig"
+
+# Anglizismus gelassen, da sowohl "Link" und "checken" sehr gebräuchlich sind
+#: templates/wagtaillinkchecker/delete.html:3
+#: templates/wagtaillinkchecker/index.html:3
+#: templates/wagtaillinkchecker/index.html:10
+#: templates/wagtaillinkchecker/settings.html:3
+#: templates/wagtaillinkchecker/settings.html:10 wagtail_hooks.py:33
+msgid "Link Checker"
+msgstr "Link-Checker"
+
+#: templates/wagtaillinkchecker/delete.html:6
+msgid "Delete"
+msgstr "Löschen"
+
+#: templates/wagtaillinkchecker/delete.html:12
+msgid "Are you sure you want to delete these scan results?"
+msgstr ""
+"Sind sie sicher, dass sie die Ergebnisse der Überprüfung löschen wollen?"
+
+#: templates/wagtaillinkchecker/delete.html:13
+msgid "Yes, delete them"
+msgstr "Ja, löschen"
+
+#: templates/wagtaillinkchecker/index.html:14
+msgid "Conduct Scan"
+msgstr "Überprüfung durchführen"
+
+#: templates/wagtaillinkchecker/index.html:15
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: templates/wagtaillinkchecker/index.html:23
+msgid "No scans yet!"
+msgstr "Es sind noch keine Überprüfungen vorhanden!"
+
+#: templates/wagtaillinkchecker/results.html:3
+#: templates/wagtaillinkchecker/scan.html:3
+msgid "Link Checker Results"
+msgstr "Link-Checker-Ergebnisse"
+
+#: templates/wagtaillinkchecker/scan.html:11
+msgid "Links To Be Scanned "
+msgstr "Links für die Überprüfung"
+
+#: templates/wagtaillinkchecker/scan.html:14
+msgid "PAGE CONTAINING LINK WAS DELETED"
+msgstr "DIE SEITE MIT DEM LINK WURDE GELÖSCHT"
+
+#: templates/wagtaillinkchecker/scan.html:18
+#: templates/wagtaillinkchecker/scan_list.html:7
+msgid "Results"
+msgstr "Ergebnisse"
+
+#: templates/wagtaillinkchecker/scan.html:20
+msgid "Broken Links"
+msgstr "Fehlerhafte Links"
+
+#: templates/wagtaillinkchecker/scan.html:24
+msgid "Edit page containing this link"
+msgstr "Seite mit dem Link bearbeiten"
+
+#: templates/wagtaillinkchecker/scan.html:25
+msgid "Status Code"
+msgstr "Status-Code"
+
+#: templates/wagtaillinkchecker/scan.html:26
+msgid "Error"
+msgstr "Fehler"
+
+#: templates/wagtaillinkchecker/scan.html:27
+msgid "Info: </b>PAGE CONTAINING THIS LINK WAS DELETED"
+msgstr "Info: </b>DIE SEITE MIT DIESEM LINK WURDE ENTFERNT"
+
+#: templates/wagtaillinkchecker/scan.html:31
+msgid "Congratulations, there are no broken links!"
+msgstr "Gratuliere, alle Links funktionieren!"
+
+#: templates/wagtaillinkchecker/scan.html:38
+msgid "PAGE CONTAINING LINK WAS DELETED "
+msgstr "DIE SEITE MIT DEM LINK WURDE GELÖSCHT"
+
+#: templates/wagtaillinkchecker/scan.html:42
+msgid "There are no working links!"
+msgstr "Es gibt keine funktionierenden Links!"
+
+#: templates/wagtaillinkchecker/scan.html:45
+msgid "Back"
+msgstr "Zurück"
+
+#: templates/wagtaillinkchecker/scan_list.html:5
+msgid "Date"
+msgstr "Datum"
+
+#: templates/wagtaillinkchecker/scan_list.html:6
+msgid "Links Scanned"
+msgstr "Links überprüft"
+
+#: templates/wagtaillinkchecker/scan_list.html:8
+#: templates/wagtaillinkchecker/scan_list.html:28
+msgid "Completed"
+msgstr "Abgeschlossen"
+
+#: templates/wagtaillinkchecker/scan_list.html:18
+msgid "View Scan"
+msgstr "Überprüfung anzeigen"
+
+#: templates/wagtaillinkchecker/scan_list.html:19
+msgid "Delete Scan"
+msgstr "Überprüfung löschen"
+
+#: templates/wagtaillinkchecker/scan_list.html:23
+#, python-format
+msgid "%(broken_links)s broken links out of %(links)s links"
+msgstr "%(broken_links)s von %(links)s Links sind fehlerhaft"
+
+#: templates/wagtaillinkchecker/scan_list.html:30
+#, python-format
+msgid "%(links)s links found"
+msgstr "%(links)s Links gefunden"
+
+#: templates/wagtaillinkchecker/scan_list.html:31
+#, python-format
+msgid "%(crawled_links)s links crawled"
+msgstr "%(crawled_links)s Links überprüft"
+
+#: templates/wagtaillinkchecker/scan_list.html:32
+#, python-format
+msgid "%(broken_links)s broken links found"
+msgstr "%(broken_links)s defekte Links gefunden"
+
+#: templates/wagtaillinkchecker/scan_list.html:40
+#, python-format
+msgid "Page %(number)s of %(total)s"
+msgstr "Seite %(number)s von %(total)s"
+
+#: templates/wagtaillinkchecker/scan_list.html:46
+msgid "Previous"
+msgstr "Vorherige"
+
+#: templates/wagtaillinkchecker/scan_list.html:55
+msgid "Next"
+msgstr "Nächste"
+
+#: templates/wagtaillinkchecker/settings.html:14
+msgid "Scan Index"
+msgstr "Überprüfungs-Übersicht"
+
+#: templates/wagtaillinkchecker/settings.html:23
+msgid "Save"
+msgstr "Speichern"
+
+#: views.py:70
+msgid "The scan results were successfully deleted."
+msgstr "Die Überprüfungs-Ergebnisse wurden erfolgreich entfernt"
+
+#: views.py:91
+msgid "Link checker settings have been updated."
+msgstr "Link-Checker-Einstellungen wurden aktualisiert."
+
+#: views.py:95
+msgid "The form could not be saved due to validation errors"
+msgstr "Formular konnte wegen Validierungsfehlern nicht gespeichert werden"
+
+#: views.py:118
+msgid "No celery workers are running, the scan was not conducted."
+msgstr ""
+"Keine laufenden Celery-Worker gefunden, die Überprüfung wurde nicht "
+"durchgeführt."
