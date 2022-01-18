@@ -2,3 +2,4 @@ include LICENSE
 include README.rst
 
 recursive-include wagtaillinkchecker/templates *
+recursive-include wagtaillinkchecker/locale *
