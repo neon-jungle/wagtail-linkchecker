@@ -35,8 +35,9 @@ class Command(BaseCommand):
 
         print(f'Scanning {len(pages)} pages...')
         scan = broken_link_scan(site, run_sync, verbosity)
-        broken_links = ScanLink.objects.filter(scan=scan, crawled=True)
-        print(f'Found {len(broken_links)} broken links.')
+        total_links = ScanLink.objects.filter(scan=scan, crawled=True)
+        broken_links = ScanLink.objects.filter(scan=scan, broken=True)
+        print(f'Found {len(total_links)} total links, with {len(broken_links)} broken links.')
 
         if kwargs.get('do_not_send_mail'):
             print(f'Will not send any emails')
